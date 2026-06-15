@@ -17,6 +17,7 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./static:/app/static:ro
+      - db-data:/app/data:ro
     depends_on:
       - app
     networks:
