@@ -1427,8 +1427,37 @@ body {
 }
 
 .pantry-low-stock-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-weight: 800;
     margin-bottom: 8px;
+}
+
+.pantry-low-stock-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    line-height: 1;
+    color: var(--white);
+    font-weight: 800;
+}
+
+.pantry-low-stock-warning-low .pantry-low-stock-icon {
+    background: #c77a00;
+}
+
+.pantry-low-stock-warning-very-low .pantry-low-stock-icon {
+    background: #d46600;
+}
+
+.pantry-low-stock-warning-empty .pantry-low-stock-icon {
+    background: #c4313d;
 }
 
 .pantry-low-stock-warning-low .pantry-low-stock-title {

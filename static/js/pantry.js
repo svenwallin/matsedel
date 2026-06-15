@@ -22,15 +22,18 @@ const LOW_STOCK_THRESHOLDS = {
 const STOCK_WARNING_LEVELS = {
     low: {
         title: 'Dags att fylla på',
-        className: 'low'
+        className: 'low',
+        icon: '!'
     },
     veryLow: {
         title: 'Mycket lite kvar',
-        className: 'very-low'
+        className: 'very-low',
+        icon: '!!'
     },
     empty: {
         title: 'Slut i lager',
-        className: 'empty'
+        className: 'empty',
+        icon: 'X'
     }
 };
 
@@ -153,7 +156,10 @@ function stockWarningSectionTemplate(levelKey, items) {
 
     return `
         <div class="pantry-low-stock-warning pantry-low-stock-warning-${config.className}">
-            <p class="pantry-low-stock-title">${config.title}</p>
+            <p class="pantry-low-stock-title">
+                <span class="pantry-low-stock-icon" aria-hidden="true">${config.icon}</span>
+                <span>${config.title}</span>
+            </p>
             <ul class="pantry-low-stock-list">
                 ${items.map((item) => `
                     <li>
