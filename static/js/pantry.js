@@ -3,6 +3,22 @@ function formatPantryAmount(amount) {
     return rounded.toString().replace('.', ',');
 }
 
+const LOW_STOCK_THRESHOLDS = {
+    g: 200,
+    kg: 0.2,
+    ml: 200,
+    cl: 20,
+    dl: 2,
+    l: 0.5,
+    tsk: 2,
+    msk: 1,
+    krm: 5,
+    st: 2,
+    pkt: 1,
+    burk: 1,
+    knippe: 1
+};
+
 function showPantryMessage(text, isError) {
     const el = document.getElementById('pantryMessage');
     el.textContent = text;
@@ -79,6 +95,34 @@ function pantrySummaryBadges(summary) {
     `;
 }
 
+function getLowStockItems(items) {
+    return items.filter((item) => {
+        const unit = (item.unit || '').trim().toLowerCase();
+        const threshold = LOW_STOCK_THRESHOLDS[unit] ?? 1;
+        return Number(item.amount || 0) <= threshold;
+    });
+}
+
+function lowStockTemplate(items, compact = false) {
+    if (!Array.isArray(items) || items.length === 0) {
+        return '<p class="pantry-low-stock-empty">Inga varor har låg nivå just nu.</p>';
+    }
+
+    return `
+        <div class="pantry-low-stock ${compact ? 'pantry-low-stock-compact' : ''}">
+            <p class="pantry-low-stock-title">Lågt i lager</p>
+            <ul class="pantry-low-stock-list">
+                ${items.map((item) => `
+                    <li>
+                        <span>${item.name}</span>
+                        <span>${formatPantryAmount(item.amount)} ${item.unit}</span>
+                    </li>
+                `).join('')}
+            </ul>
+        </div>
+    `;
+}
+
 function renderCurrentPantrySummary(items) {
     const container = document.getElementById('pantryCurrentSummary');
 
@@ -87,16 +131,21 @@ function renderCurrentPantrySummary(items) {
         return;
     }
 
-    container.innerHTML = pantrySummaryBadges(getPantrySummary(items));
+    container.innerHTML = `
+        ${pantrySummaryBadges(getPantrySummary(items))}
+        ${lowStockTemplate(getLowStockItems(items), true)}
+    `;
 }
 
 function pantryOverviewTemplate(locationName, items) {
     const summary = getPantrySummary(items);
+    const lowStockItems = getLowStockItems(items);
 
     return `
         <section class="pantry-overview-card">
             <h3>${locationName}</h3>
             ${pantrySummaryBadges(summary)}
+            ${lowStockTemplate(lowStockItems)}
             ${items.length === 0 ? '<p class="loading">Tomt skafferi.</p>' : `
                 <ul class="pantry-overview-list">
                     ${items.map((item) => `
