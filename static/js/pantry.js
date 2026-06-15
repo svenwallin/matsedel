@@ -23,17 +23,37 @@ const STOCK_WARNING_LEVELS = {
     low: {
         title: 'Dags att fylla på',
         className: 'low',
-        icon: '!'
+        icon: `
+            <svg viewBox="0 0 24 24" class="pantry-low-stock-icon-svg" aria-hidden="true" focusable="false">
+                <path d="M12 7v6" />
+                <circle cx="12" cy="17" r="1.5" />
+                <path d="M12 3.5 21 19a1 1 0 0 1-.87 1.5H3.87A1 1 0 0 1 3 19L12 3.5Z" />
+            </svg>
+        `
     },
     veryLow: {
         title: 'Mycket lite kvar',
         className: 'very-low',
-        icon: '!!'
+        icon: `
+            <svg viewBox="0 0 24 24" class="pantry-low-stock-icon-svg" aria-hidden="true" focusable="false">
+                <path d="M6.5 7v5" />
+                <circle cx="6.5" cy="15.5" r="1.2" />
+                <path d="M12.5 7v5" />
+                <circle cx="12.5" cy="15.5" r="1.2" />
+                <path d="M12 3.5 21 19a1 1 0 0 1-.87 1.5H3.87A1 1 0 0 1 3 19L12 3.5Z" />
+            </svg>
+        `
     },
     empty: {
         title: 'Slut i lager',
         className: 'empty',
-        icon: 'X'
+        icon: `
+            <svg viewBox="0 0 24 24" class="pantry-low-stock-icon-svg" aria-hidden="true" focusable="false">
+                <path d="M8 8l8 8" />
+                <path d="M16 8l-8 8" />
+                <circle cx="12" cy="12" r="8.5" />
+            </svg>
+        `
     }
 };
 

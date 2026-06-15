@@ -1438,14 +1438,23 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 24px;
+    width: 24px;
     height: 24px;
-    padding: 0 6px;
+    padding: 0;
     border-radius: 999px;
-    font-size: 0.85rem;
     line-height: 1;
     color: var(--white);
-    font-weight: 800;
+}
+
+.pantry-low-stock-icon-svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .pantry-low-stock-warning-low .pantry-low-stock-icon {
