@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recept - Matsedel</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <span class="logo-icon">🍳</span>
+                    <span class="logo-text">Matsedel</span>
+                </a>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Recept</a>
+                    <a href="/menus" class="nav-link">Matsedlar</a>
+                    <a href="/#about" class="nav-link">Om oss</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Recipe Detail -->
+    <main class="recipe-detail">
+        <div class="container">
+            <a href="/" class="back-link">← Tillbaka till alla recept</a>
+            
+            <div class="recipe-content" id="recipeContent">
+                <!-- Recipe loaded dynamically -->
+                <div class="loading">Laddar recept...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Matsedel</h3>
+                    <p>Recept för storkok och utemiljö</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Snabblänkar</h4>
+                    <a href="/">Alla recept</a>
+                    <a href="/#categories">Kategorier</a>
+                    <a href="/#about">Om oss</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Matsedel. Gjord med ❤️ för friluftsliv.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/recipe.js"></script>
+</body>
+</html>

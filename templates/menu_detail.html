@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matsedel - Redigera</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <span class="logo-icon">🍳</span>
+                    <span class="logo-text">Matsedel</span>
+                </a>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Recept</a>
+                    <a href="/menus" class="nav-link active">Matsedlar</a>
+                    <a href="/#about" class="nav-link">Om oss</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menu Detail -->
+    <main class="menu-detail-page">
+        <div class="container">
+            <a href="/menus" class="back-link">← Tillbaka till matsedlar</a>
+            
+            <div class="menu-header" id="menuHeader">
+                <div class="loading">Laddar matsedel...</div>
+            </div>
+
+            <div class="menu-content" id="menuContent">
+                <!-- Menu days loaded dynamically -->
+            </div>
+
+            <!-- Shopping List Section -->
+            <div class="shopping-list-section" id="shoppingListSection" style="display: none;">
+                <h2>🛒 Inköpslista</h2>
+                <div class="servings-selector">
+                    <label>Beräkna för antal portioner:</label>
+                    <input type="number" id="shoppingServings" min="1" max="200" value="10">
+                    <button class="btn btn-secondary" onclick="loadShoppingList()">Uppdatera</button>
+                </div>
+                <div class="shopping-list" id="shoppingList">
+                    <!-- Shopping list loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Recipe Selection Modal -->
+    <div class="modal" id="recipeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Välj recept</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-search">
+                <input type="text" id="modalSearch" placeholder="Sök recept..." oninput="filterModalRecipes()">
+            </div>
+            <div class="modal-body" id="modalRecipes">
+                <!-- Recipes loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Matsedel</h3>
+                    <p>Recept för storkok och utemiljö</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Snabblänkar</h4>
+                    <a href="/">Alla recept</a>
+                    <a href="/menus">Matsedlar</a>
+                    <a href="/#about">Om oss</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Matsedel. Gjord med ❤️ för friluftsliv.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/menu_detail.js"></script>
+</body>
+</html>

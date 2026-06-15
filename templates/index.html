@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matsedel - Storkok & Utemiljö</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <span class="logo-icon">🍳</span>
+                    <span class="logo-text">Matsedel</span>
+                </a>
+                <nav class="nav">
+                    <a href="/" class="nav-link active">Recept</a>
+                    <a href="/menus" class="nav-link">Matsedlar</a>
+                    <a href="#about" class="nav-link">Om oss</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Storkok & Utemiljö</h1>
+            <p>Recept för läger, friluftsliv och storkok</p>
+            <div class="hero-search">
+                <input type="text" id="searchInput" placeholder="Sök recept..." class="search-input">
+                <button onclick="searchRecipes()" class="btn btn-primary">Sök</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Filter -->
+    <section class="categories" id="categories">
+        <div class="container">
+            <div class="category-buttons" id="categoryButtons">
+                <button class="category-btn active" data-category="all">Alla</button>
+                <!-- Categories loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Recipes Grid -->
+    <section class="recipes-section">
+        <div class="container">
+            <h2 class="section-title">Våra Recept</h2>
+            <div class="recipes-grid" id="recipesGrid">
+                <!-- Recipes loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Om Matsedel</h2>
+                    <p>Matsedel är din guide till god mat för storkok och utemiljö. Här hittar du beprövade recept perfekta för läger, hajker och friluftsliv.</p>
+                    <p>Alla recept kan anpassas efter antal portioner - skriv in hur många du lagar för så räknar vi ut ingrediensmängderna åt dig!</p>
+                </div>
+                <div class="about-features">
+                    <div class="feature">
+                        <span class="feature-icon">🔢</span>
+                        <h3>Portionsräknare</h3>
+                        <p>Anpassa recepten till valfritt antal portioner</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🏕️</span>
+                        <h3>Lägermat</h3>
+                        <p>Recept anpassade för matlagning utomhus</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">👥</span>
+                        <h3>Storkok</h3>
+                        <p>Perfekt för stora grupper</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Matsedel</h3>
+                    <p>Recept för storkok och utemiljö</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Snabblänkar</h4>
+                    <a href="/">Alla recept</a>
+                    <a href="#categories">Kategorier</a>
+                    <a href="#about">Om oss</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Matsedel. Gjord med ❤️ för friluftsliv.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
