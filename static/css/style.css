@@ -1366,6 +1366,35 @@ body {
     gap: 20px;
 }
 
+.pantry-summary-strip {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+}
+
+.pantry-summary-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pantry-summary-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #eef7f2;
+    color: var(--primary-dark);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.pantry-summary-badge-strong {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
 .pantry-overview-section {
     display: grid;
     gap: 16px;
@@ -1391,6 +1420,10 @@ body {
 .pantry-overview-card h3 {
     color: var(--primary-color);
     margin-bottom: 12px;
+}
+
+.pantry-overview-card .pantry-summary-badges {
+    margin-bottom: 16px;
 }
 
 .pantry-overview-list {
