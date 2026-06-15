@@ -3,7 +3,7 @@ import uuid
 import logging
 from flask import Flask, render_template, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
-from database import (init_db, get_all_recipes, get_recipe, add_recipe, 
+from database import (init_db, get_all_recipes, get_recipe, add_recipe, update_recipe,
                       get_recipes_by_category, get_categories, search_recipes,
                       create_menu, get_all_menus, get_menu, update_menu_item, 
                       delete_menu, get_menu_shopping_list, MEAL_TYPES)
@@ -42,6 +42,10 @@ def menus_page():
     """Menu planning page."""
     return render_template('menus.html')
 
+@app.route('/recipe/<int:recipe_id>/edit')
+def recipe_edit_page(recipe_id):
+    """Recipe edit page."""
+    return render_template('recipe_edit.html', recipe_id=recipe_id)
 @app.route('/editor')
 def recipe_editor_page():
     """Recipe editor page."""
@@ -114,6 +118,36 @@ def api_upload_image():
     if 'image' not in request.files:
         return jsonify({'error': 'No image file provided'}), 400
 
+@app.route('/api/recipes/<int:recipe_id>', methods=['PUT'])
+def api_update_recipe(recipe_id):
+    """Update an existing recipe."""
+    data = request.json
+    
+    # Check if recipe exists
+    existing_recipe = get_recipe(recipe_id)
+    if not existing_recipe:
+        return jsonify({'error': 'Recipe not found'}), 404
+    
+    required = ['name', 'ingredients']
+    if not all(k in data for k in required):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    # Use existing image_url if no new image provided
+    image_url = data.get('image_url', existing_recipe['image_url'])
+    
+    update_recipe(
+        recipe_id=recipe_id,
+        name=data['name'],
+        description=data.get('description', ''),
+        category=data.get('category', 'Övrigt'),
+        base_servings=data.get('base_servings', 4),
+        cooking_time=data.get('cooking_time', ''),
+        instructions=data.get('instructions', ''),
+        image_url=image_url,
+        ingredients=data['ingredients']
+    )
+    
+    return jsonify({'id': recipe_id, 'message': 'Recipe updated successfully'}), 200
     image = request.files['image']
     if not image or image.filename == '':
         return jsonify({'error': 'No file selected'}), 400

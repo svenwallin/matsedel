@@ -1193,6 +1193,40 @@ body {
     color: var(--text-color);
 }
 
+.recipe-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+}
+
+.recipe-actions a,
+.recipe-actions button {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+}
+
+.editor-current-image {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: var(--bg-color);
+    border-radius: var(--border-radius);
+}
+
+.editor-current-image p {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 10px;
+}
+
+.editor-current-image img {
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.editor-image-preview {
+    margin-bottom: 15px;
+}
 .ingredient-amount {
     font-weight: 600;
     color: var(--primary-color);

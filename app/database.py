@@ -145,6 +145,31 @@ def search_recipes(query):
         WHERE name LIKE ? OR description LIKE ?
         ORDER BY name
     ''', (search_term, search_term))
+
+    def update_recipe(recipe_id, name, description, category, base_servings, cooking_time, instructions, image_url, ingredients):
+        """Update an existing recipe with ingredients."""
+        conn = get_db()
+        cursor = conn.cursor()
+    
+        cursor.execute('''
+            UPDATE recipes 
+            SET name = ?, description = ?, category = ?, base_servings = ?, cooking_time = ?, instructions = ?, image_url = ?
+            WHERE id = ?
+        ''', (name, description, category, base_servings, cooking_time, instructions, image_url, recipe_id))
+    
+        # Delete old ingredients
+        cursor.execute('DELETE FROM ingredients WHERE recipe_id = ?', (recipe_id,))
+    
+        # Add new ingredients
+        for ingredient in ingredients:
+            cursor.execute('''
+                INSERT INTO ingredients (recipe_id, name, amount, unit)
+                VALUES (?, ?, ?, ?)
+            ''', (recipe_id, ingredient['name'], ingredient['amount'], ingredient['unit']))
+    
+        conn.commit()
+        conn.close()
+        return recipe_id
     recipes = cursor.fetchall()
     conn.close()
     return [dict(row) for row in recipes]
