@@ -46,6 +46,7 @@ def menus_page():
 def recipe_edit_page(recipe_id):
     """Recipe edit page."""
     return render_template('recipe_edit.html', recipe_id=recipe_id)
+
 @app.route('/editor')
 def recipe_editor_page():
     """Recipe editor page."""
@@ -118,6 +119,34 @@ def api_upload_image():
     if 'image' not in request.files:
         return jsonify({'error': 'No image file provided'}), 400
 
+    image = request.files['image']
+    if not image or image.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+
+    if not allowed_file(image.filename):
+        return jsonify({'error': 'Invalid file type. Allowed: png, jpg, jpeg, gif, webp'}), 400
+
+    try:
+        # Ensure upload directory exists with proper permissions
+        os.makedirs(UPLOAD_FOLDER, mode=0o755, exist_ok=True)
+        
+        filename = secure_filename(image.filename)
+        ext = filename.rsplit('.', 1)[1].lower()
+        unique_name = f"{uuid.uuid4().hex}.{ext}"
+        save_path = os.path.join(UPLOAD_FOLDER, unique_name)
+
+        # Save the image file
+        image.save(save_path)
+        
+        # Verify file was saved
+        if not os.path.exists(save_path):
+            return jsonify({'error': 'Failed to save image file'}), 500
+        
+        return jsonify({'url': f'/uploads/{unique_name}'}), 201
+    except Exception as e:
+        app.logger.error(f'Error uploading image: {str(e)}')
+        return jsonify({'error': f'Upload failed: {str(e)}'}), 500
+
 @app.route('/api/recipes/<int:recipe_id>', methods=['PUT'])
 def api_update_recipe(recipe_id):
     """Update an existing recipe."""
@@ -148,33 +177,6 @@ def api_update_recipe(recipe_id):
     )
     
     return jsonify({'id': recipe_id, 'message': 'Recipe updated successfully'}), 200
-    image = request.files['image']
-    if not image or image.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-
-    if not allowed_file(image.filename):
-        return jsonify({'error': 'Invalid file type. Allowed: png, jpg, jpeg, gif, webp'}), 400
-
-    try:
-        # Ensure upload directory exists with proper permissions
-        os.makedirs(UPLOAD_FOLDER, mode=0o755, exist_ok=True)
-        
-        filename = secure_filename(image.filename)
-        ext = filename.rsplit('.', 1)[1].lower()
-        unique_name = f"{uuid.uuid4().hex}.{ext}"
-        save_path = os.path.join(UPLOAD_FOLDER, unique_name)
-
-        # Save the image file
-        image.save(save_path)
-        
-        # Verify file was saved
-        if not os.path.exists(save_path):
-            return jsonify({'error': 'Failed to save image file'}), 500
-        
-        return jsonify({'url': f'/uploads/{unique_name}'}), 201
-    except Exception as e:
-        app.logger.error(f'Error uploading image: {str(e)}')
-        return jsonify({'error': f'Upload failed: {str(e)}'}), 500
 
 @app.route('/api/categories')
 def api_categories():
