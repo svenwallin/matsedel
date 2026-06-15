@@ -207,19 +207,19 @@ SAMPLE_RECIPES = [
 def load_sample_data():
     """Load sample recipes into the database."""
     init_db()
-    
+
     # Check if data already exists
     existing = get_all_recipes()
     if existing:
         print(f"Database already contains {len(existing)} recipes. Skipping sample data.")
         return
-    
+
     print("Loading sample recipes...")
     for recipe in SAMPLE_RECIPES:
         ingredients = recipe.pop('ingredients')
         recipe_id = add_recipe(**recipe, ingredients=ingredients)
         print(f"  Added: {recipe['name']} (ID: {recipe_id})")
-    
+
     print(f"\nLoaded {len(SAMPLE_RECIPES)} sample recipes successfully!")
 
 if __name__ == '__main__':

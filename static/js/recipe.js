@@ -42,6 +42,9 @@ async function loadRecipe(recipeId) {
 function displayRecipe(recipe) {
     const container = document.getElementById('recipeContent');
     const icon = RECIPE_ICONS[recipe.category] || RECIPE_ICONS.default;
+    const imageMarkup = recipe.image_url
+        ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-large">`
+        : icon;
     
     // Parse instructions into steps
     const instructionSteps = recipe.instructions ? 
@@ -49,7 +52,7 @@ function displayRecipe(recipe) {
     
     container.innerHTML = `
         <div class="recipe-header">
-            <div class="recipe-image-large">${icon}</div>
+            <div class="recipe-image-large">${imageMarkup}</div>
             <div class="recipe-title-section">
                 <span class="recipe-category">${recipe.category || 'Övrigt'}</span>
                 <h1>${recipe.name}</h1>

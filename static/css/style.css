@@ -244,6 +244,13 @@ body {
     font-size: 4rem;
 }
 
+.recipe-photo-card {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 .recipe-info {
     padding: 20px;
 }
@@ -317,6 +324,14 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 8rem;
+}
+
+.recipe-photo-large {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--border-radius);
 }
 
 .recipe-title-section h1 {
@@ -621,6 +636,21 @@ body {
 }
 
 .form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-group select {
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--white);
+    transition: var(--transition);
+}
+
+.form-group select:focus {
     outline: none;
     border-color: var(--primary-color);
 }
@@ -1065,6 +1095,100 @@ body {
     border-bottom: none;
 }
 
+.editor-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: var(--transition);
+    resize: vertical;
+}
+
+.editor-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.editor-ingredients-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.editor-ingredients-header h3 {
+    color: var(--primary-color);
+}
+
+.editor-ingredients-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.editor-ingredient-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: center;
+}
+
+.editor-ingredient-row input {
+    padding: 10px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.editor-ingredient-row input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.editor-ingredient-row select {
+    padding: 10px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: var(--white);
+}
+
+.editor-ingredient-row select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.remove-ingredient-btn {
+    border-radius: 12px;
+    padding: 10px 14px;
+}
+
+.editor-actions {
+    margin-top: 10px;
+}
+
+.editor-message {
+    min-height: 24px;
+    font-weight: 700;
+}
+
+.editor-message.success {
+    color: var(--primary-color);
+}
+
+.editor-message.error {
+    color: var(--accent-color);
+}
+
+.editor-help {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
 .ingredient-name {
     color: var(--text-color);
 }
@@ -1183,5 +1307,9 @@ body {
     
     .servings-selector {
         flex-wrap: wrap;
+    }
+
+    .editor-ingredient-row {
+        grid-template-columns: 1fr;
     }
 }

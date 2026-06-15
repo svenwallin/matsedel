@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lägg Till Recept - Matsedel</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <span class="logo-icon">🍳</span>
+                    <span class="logo-text">Matsedel</span>
+                </a>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Recept</a>
+                    <a href="/menus" class="nav-link">Matsedlar</a>
+                    <a href="/editor" class="nav-link active">Lägg till recept</a>
+                    <a href="/#about" class="nav-link">Om oss</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero hero-small">
+        <div class="container">
+            <h1>✍️ Lägg till nytt recept</h1>
+            <p>Skapa ett recept med ingredienser och instruktioner</p>
+        </div>
+    </section>
+
+    <main class="create-menu-section">
+        <div class="container">
+            <div class="create-menu-card">
+                <h2>Receptdetaljer</h2>
+                <form id="recipeEditorForm" class="create-menu-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recipeName">Namn</label>
+                            <input type="text" id="recipeName" required placeholder="T.ex. Chili con carne">
+                        </div>
+                        <div class="form-group">
+                            <label for="recipeCategory">Kategori</label>
+                            <select id="recipeCategory" required>
+                                <option value="" disabled selected>Välj kategori</option>
+                                <option value="Bröd">Bröd</option>
+                                <option value="Dessert">Dessert</option>
+                                <option value="Frukost">Frukost</option>
+                                <option value="Huvudrätt">Huvudrätt</option>
+                                <option value="Soppa">Soppa</option>
+                                <option value="Tillbehör">Tillbehör</option>
+                                <option value="Övrigt">Övrigt</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipeTime">Tillagningstid</label>
+                            <input type="text" id="recipeTime" required placeholder="T.ex. 40 min">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recipeServings">Basportioner</label>
+                            <input type="number" id="recipeServings" min="1" max="500" value="4" required>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label for="recipeDescription">Beskrivning</label>
+                            <input type="text" id="recipeDescription" placeholder="Kort beskrivning av receptet">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipeInstructions">Instruktioner (en rad per steg)</label>
+                        <textarea id="recipeInstructions" class="editor-textarea" rows="8" required placeholder="Steg 1...&#10;Steg 2...&#10;Steg 3..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipeImage">Receptbild (valfritt)</label>
+                        <input type="file" id="recipeImage" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/*" capture="environment">
+                        <p class="editor-help">Max 5 MB. Format: PNG, JPG, GIF, WEBP.</p>
+                    </div>
+
+                    <div class="editor-ingredients-header">
+                        <h3>Ingredienser</h3>
+                        <button type="button" id="addIngredientBtn" class="btn btn-secondary">+ Lägg till rad</button>
+                    </div>
+                    <div id="ingredientsRows" class="editor-ingredients-list"></div>
+
+                    <div class="editor-actions">
+                        <button type="submit" class="btn btn-primary">Spara recept</button>
+                    </div>
+                    <p id="editorMessage" class="editor-message" aria-live="polite"></p>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Matsedel</h3>
+                    <p>Recept för storkok och utemiljö</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Snabblänkar</h4>
+                    <a href="/">Alla recept</a>
+                    <a href="/menus">Matsedlar</a>
+                    <a href="/editor">Lägg till recept</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Matsedel. Gjord med ❤️ för friluftsliv.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/recipe_editor.js"></script>
+</body>
+</html>

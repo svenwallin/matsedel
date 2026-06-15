@@ -76,7 +76,9 @@ function displayRecipes(recipes) {
     grid.innerHTML = recipes.map(recipe => `
         <article class="recipe-card" onclick="window.location.href='/recipe/${recipe.id}'">
             <div class="recipe-image">
-                ${RECIPE_ICONS[recipe.category] || RECIPE_ICONS.default}
+                ${recipe.image_url
+                    ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-card">`
+                    : (RECIPE_ICONS[recipe.category] || RECIPE_ICONS.default)}
             </div>
             <div class="recipe-info">
                 <span class="recipe-category">${recipe.category || 'Övrigt'}</span>

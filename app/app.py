@@ -1,13 +1,26 @@
-from flask import Flask, render_template, jsonify, request
+import os
+import uuid
+from flask import Flask, render_template, jsonify, request, send_from_directory
+from werkzeug.utils import secure_filename
 from database import (init_db, get_all_recipes, get_recipe, add_recipe, 
                       get_recipes_by_category, get_categories, search_recipes,
                       create_menu, get_all_menus, get_menu, update_menu_item, 
                       delete_menu, get_menu_shopping_list, MEAL_TYPES)
 
 app = Flask(__name__, static_folder='../static', template_folder='../templates')
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '..', 'data', 'uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 # Initialize database on startup
 init_db()
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+def allowed_file(filename):
+    """Check if uploaded file extension is allowed."""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
 def index():
@@ -24,10 +37,21 @@ def menus_page():
     """Menu planning page."""
     return render_template('menus.html')
 
+@app.route('/editor')
+def recipe_editor_page():
+    """Recipe editor page."""
+    return render_template('recipe_editor.html')
+
 @app.route('/menu/<int:menu_id>')
 def menu_detail(menu_id):
     """Menu detail/edit page."""
     return render_template('menu_detail.html', menu_id=menu_id)
+
+
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    """Serve uploaded recipe photos from persistent storage."""
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 # API Routes
 @app.route('/api/recipes')
@@ -74,6 +98,28 @@ def api_add_recipe():
     )
     
     return jsonify({'id': recipe_id, 'message': 'Recipe added successfully'}), 201
+
+
+@app.route('/api/uploads', methods=['POST'])
+def api_upload_image():
+    """Upload a recipe image and return its URL."""
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image file provided'}), 400
+
+    image = request.files['image']
+    if not image or image.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+
+    if not allowed_file(image.filename):
+        return jsonify({'error': 'Invalid file type. Allowed: png, jpg, jpeg, gif, webp'}), 400
+
+    filename = secure_filename(image.filename)
+    ext = filename.rsplit('.', 1)[1].lower()
+    unique_name = f"{uuid.uuid4().hex}.{ext}"
+    save_path = os.path.join(UPLOAD_FOLDER, unique_name)
+
+    image.save(save_path)
+    return jsonify({'url': f'/uploads/{unique_name}'}), 201
 
 @app.route('/api/categories')
 def api_categories():
