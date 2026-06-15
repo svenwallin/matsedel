@@ -5,8 +5,12 @@ from flask import Flask, render_template, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 from database import (init_db, get_all_recipes, get_recipe, add_recipe, update_recipe,
                       get_recipes_by_category, get_categories, search_recipes,
-                      create_menu, get_all_menus, get_menu, update_menu_item, 
-                      delete_menu, get_menu_shopping_list, MEAL_TYPES)
+                      create_menu, get_all_menus, get_menu, update_menu_item,
+                      delete_menu, get_menu_shopping_list, MEAL_TYPES,
+                      get_all_pantry_items, add_pantry_item, update_pantry_item,
+                      delete_pantry_item, get_all_pantry_locations,
+                      add_pantry_location, update_pantry_location,
+                      delete_pantry_location, consume_menu_from_pantry)
 
 app = Flask(__name__, static_folder='../static', template_folder='../templates')
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
@@ -51,6 +55,11 @@ def recipe_edit_page(recipe_id):
 def recipe_editor_page():
     """Recipe editor page."""
     return render_template('recipe_editor.html')
+
+@app.route('/skafferi')
+def pantry_page():
+    """Pantry inventory page."""
+    return render_template('pantry.html')
 
 @app.route('/menu/<int:menu_id>')
 def menu_detail(menu_id):
@@ -184,6 +193,102 @@ def api_categories():
     categories = get_categories()
     return jsonify(categories)
 
+@app.route('/api/pantry')
+def api_pantry_items():
+    """Get all pantry items."""
+    pantry_location_id = request.args.get('pantry_location_id', type=int)
+    return jsonify(get_all_pantry_items(pantry_location_id))
+
+@app.route('/api/pantry-locations')
+def api_pantry_locations():
+    """Get all pantry locations."""
+    return jsonify(get_all_pantry_locations())
+
+@app.route('/api/pantry-locations', methods=['POST'])
+def api_add_pantry_location():
+    """Add a pantry location."""
+    data = request.json
+    if not data or not data.get('name'):
+        return jsonify({'error': 'name is required'}), 400
+
+    try:
+        location_id = add_pantry_location(data['name'].strip())
+    except Exception:
+        return jsonify({'error': 'Kunde inte skapa skafferi. Namnet kanske redan finns.'}), 400
+
+    return jsonify({'id': location_id, 'message': 'Pantry location added successfully'}), 201
+
+@app.route('/api/pantry-locations/<int:location_id>', methods=['PUT'])
+def api_update_pantry_location(location_id):
+    """Rename a pantry location."""
+    data = request.json
+    if not data or not data.get('name'):
+        return jsonify({'error': 'name is required'}), 400
+
+    try:
+        update_pantry_location(location_id, data['name'].strip())
+    except Exception:
+        return jsonify({'error': 'Kunde inte byta namn på skafferiet.'}), 400
+
+    return jsonify({'message': 'Pantry location updated successfully'})
+
+@app.route('/api/pantry-locations/<int:location_id>', methods=['DELETE'])
+def api_delete_pantry_location(location_id):
+    """Delete a pantry location."""
+    try:
+        delete_pantry_location(location_id)
+    except ValueError as error:
+        return jsonify({'error': str(error)}), 400
+
+    return jsonify({'message': 'Pantry location deleted successfully'})
+
+@app.route('/api/pantry', methods=['POST'])
+def api_add_pantry_item():
+    """Add a pantry item."""
+    data = request.json
+
+    required = ['pantry_location_id', 'name', 'amount', 'unit']
+    if not data or not all(k in data for k in required):
+        return jsonify({'error': 'pantry_location_id, name, amount and unit are required'}), 400
+
+    try:
+        pantry_location_id = int(data['pantry_location_id'])
+        amount = float(data['amount'])
+    except (TypeError, ValueError):
+        return jsonify({'error': 'pantry_location_id and amount must be numbers'}), 400
+
+    if amount < 0:
+        return jsonify({'error': 'amount must be zero or greater'}), 400
+
+    item_id = add_pantry_item(pantry_location_id, data['name'].strip(), amount, data['unit'].strip())
+    return jsonify({'id': item_id, 'message': 'Pantry item added successfully'}), 201
+
+@app.route('/api/pantry/<int:item_id>', methods=['PUT'])
+def api_update_pantry(item_id):
+    """Update a pantry item."""
+    data = request.json
+
+    required = ['name', 'amount', 'unit']
+    if not data or not all(k in data for k in required):
+        return jsonify({'error': 'name, amount and unit are required'}), 400
+
+    try:
+        amount = float(data['amount'])
+    except (TypeError, ValueError):
+        return jsonify({'error': 'amount must be a number'}), 400
+
+    if amount < 0:
+        return jsonify({'error': 'amount must be zero or greater'}), 400
+
+    update_pantry_item(item_id, data['name'].strip(), amount, data['unit'].strip())
+    return jsonify({'message': 'Pantry item updated successfully'})
+
+@app.route('/api/pantry/<int:item_id>', methods=['DELETE'])
+def api_delete_pantry(item_id):
+    """Delete a pantry item."""
+    delete_pantry_item(item_id)
+    return jsonify({'message': 'Pantry item deleted successfully'})
+
 @app.route('/api/calculate/<int:recipe_id>')
 def api_calculate(recipe_id):
     """Calculate ingredients for specified number of servings."""
@@ -274,8 +379,30 @@ def api_update_menu_item(menu_id):
 def api_shopping_list(menu_id):
     """Get shopping list for a menu."""
     servings = request.args.get('servings', type=int)
-    result = get_menu_shopping_list(menu_id, servings)
+    pantry_location_id = request.args.get('pantry_location_id', type=int)
+    result = get_menu_shopping_list(menu_id, servings, pantry_location_id)
     
+    if result:
+        return jsonify(result)
+    return jsonify({'error': 'Menu not found'}), 404
+
+@app.route('/api/menus/<int:menu_id>/consume-pantry', methods=['POST'])
+def api_consume_pantry(menu_id):
+    """Deduct covered ingredients from a selected pantry location."""
+    data = request.json or {}
+    pantry_location_id = data.get('pantry_location_id')
+    servings = data.get('servings')
+
+    if pantry_location_id is None:
+        return jsonify({'error': 'pantry_location_id is required'}), 400
+
+    try:
+        pantry_location_id = int(pantry_location_id)
+        servings = int(servings) if servings is not None else None
+    except (TypeError, ValueError):
+        return jsonify({'error': 'pantry_location_id and servings must be numbers'}), 400
+
+    result = consume_menu_from_pantry(menu_id, pantry_location_id, servings)
     if result:
         return jsonify(result)
     return jsonify({'error': 'Menu not found'}), 404

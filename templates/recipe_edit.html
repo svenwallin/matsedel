@@ -18,7 +18,13 @@
                 <nav class="nav">
                     <a href="/" class="nav-link">Recept</a>
                     <a href="/menus" class="nav-link">Matsedlar</a>
-                    <a href="/editor" class="nav-link">Lägg till recept</a>
+                    <div class="nav-dropdown">
+                        <button type="button" class="nav-link nav-dropdown-toggle active">Admin</button>
+                        <div class="nav-dropdown-menu">
+                            <a href="/editor" class="nav-dropdown-item active">Lägg till recept</a>
+                            <a href="/skafferi" class="nav-dropdown-item">Skafferi</a>
+                        </div>
+                    </div>
                     <a href="/#about" class="nav-link">Om oss</a>
                 </nav>
             </div>

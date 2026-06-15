@@ -3,12 +3,52 @@ import os
 
 DATABASE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'recipes.db')
 
+UNIT_CONVERSIONS = {
+    'g': ('weight', 1),
+    'kg': ('weight', 1000),
+    'ml': ('volume', 1),
+    'cl': ('volume', 10),
+    'dl': ('volume', 100),
+    'l': ('volume', 1000),
+    'krm': ('spoon', 1),
+    'tsk': ('spoon', 5),
+    'msk': ('spoon', 15),
+}
+
+
+def normalize_unit_amount(amount, unit):
+    """Convert a supported unit to its family base unit."""
+    unit_info = UNIT_CONVERSIONS.get(unit)
+    if not unit_info:
+        return (None, None)
+
+    family, factor = unit_info
+    return (family, amount * factor)
+
+
+def convert_from_base_unit(amount, unit):
+    """Convert a base-unit amount back to the requested unit."""
+    unit_info = UNIT_CONVERSIONS.get(unit)
+    if not unit_info:
+        return amount
+
+    _, factor = unit_info
+    return amount / factor
+
 def get_db():
     """Get database connection."""
     os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
     conn = sqlite3.connect(DATABASE_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def _ensure_column(cursor, table_name, column_name, column_definition):
+    """Add a column to a table when it does not already exist."""
+    cursor.execute(f'PRAGMA table_info({table_name})')
+    existing_columns = {row['name'] for row in cursor.fetchall()}
+    if column_name not in existing_columns:
+        cursor.execute(f'ALTER TABLE {table_name} ADD COLUMN {column_definition}')
 
 def init_db():
     """Initialize the database with schema."""
@@ -66,6 +106,46 @@ def init_db():
             FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE SET NULL
         )
     ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS pantry_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            pantry_location_id INTEGER,
+            name TEXT NOT NULL,
+            amount REAL NOT NULL,
+            unit TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (pantry_location_id) REFERENCES pantry_locations(id) ON DELETE CASCADE
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS pantry_locations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    _ensure_column(cursor, 'pantry_items', 'pantry_location_id', 'pantry_location_id INTEGER')
+
+    cursor.execute('SELECT id FROM pantry_locations WHERE LOWER(name) = LOWER(?)', ('Hemma',))
+    default_location = cursor.fetchone()
+    if default_location:
+        default_location_id = default_location['id']
+    else:
+        cursor.execute('INSERT INTO pantry_locations (name) VALUES (?)', ('Hemma',))
+        default_location_id = cursor.lastrowid
+
+    cursor.execute(
+        '''
+        UPDATE pantry_items
+        SET pantry_location_id = ?
+        WHERE pantry_location_id IS NULL
+        ''',
+        (default_location_id,)
+    )
     
     conn.commit()
     conn.close()
@@ -174,6 +254,334 @@ def update_recipe(recipe_id, name, description, category, base_servings, cooking
     conn.close()
     return recipe_id
 
+def get_all_pantry_locations():
+    """Get all pantry locations."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM pantry_locations ORDER BY name COLLATE NOCASE')
+    items = cursor.fetchall()
+    conn.close()
+    return [dict(row) for row in items]
+
+
+def add_pantry_location(name):
+    """Add a pantry location."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO pantry_locations (name) VALUES (?)', (name,))
+    location_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return location_id
+
+
+def update_pantry_location(location_id, name):
+    """Rename a pantry location."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        'UPDATE pantry_locations SET name = ? WHERE id = ?',
+        (name, location_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+def delete_pantry_location(location_id):
+    """Delete a pantry location and its pantry items."""
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT COUNT(*) AS count FROM pantry_locations')
+    location_count = cursor.fetchone()['count']
+    if location_count <= 1:
+        conn.close()
+        raise ValueError('At least one pantry location must remain')
+
+    cursor.execute('DELETE FROM pantry_items WHERE pantry_location_id = ?', (location_id,))
+    cursor.execute('DELETE FROM pantry_locations WHERE id = ?', (location_id,))
+
+    conn.commit()
+    conn.close()
+
+
+def get_all_pantry_items(pantry_location_id=None):
+    """Get all pantry items."""
+    conn = get_db()
+    cursor = conn.cursor()
+    if pantry_location_id is None:
+        cursor.execute(
+            '''
+            SELECT pi.*, pl.name AS pantry_location_name
+            FROM pantry_items pi
+            JOIN pantry_locations pl ON pl.id = pi.pantry_location_id
+            ORDER BY pl.name COLLATE NOCASE, pi.name COLLATE NOCASE
+            '''
+        )
+    else:
+        cursor.execute(
+            '''
+            SELECT pi.*, pl.name AS pantry_location_name
+            FROM pantry_items pi
+            JOIN pantry_locations pl ON pl.id = pi.pantry_location_id
+            WHERE pi.pantry_location_id = ?
+            ORDER BY pi.name COLLATE NOCASE
+            ''',
+            (pantry_location_id,)
+        )
+    items = cursor.fetchall()
+    conn.close()
+    return [dict(row) for row in items]
+
+def add_pantry_item(pantry_location_id, name, amount, unit):
+    """Add a pantry item or increase the amount of an existing item."""
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        '''
+        SELECT id, amount
+        FROM pantry_items
+        WHERE pantry_location_id = ? AND LOWER(name) = LOWER(?) AND unit = ?
+        ''',
+        (pantry_location_id, name, unit)
+    )
+    existing_item = cursor.fetchone()
+
+    if existing_item:
+        new_amount = existing_item['amount'] + amount
+        cursor.execute(
+            '''
+            UPDATE pantry_items
+            SET amount = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            ''',
+            (new_amount, existing_item['id'])
+        )
+        pantry_item_id = existing_item['id']
+    else:
+        cursor.execute(
+            '''
+            INSERT INTO pantry_items (pantry_location_id, name, amount, unit)
+            VALUES (?, ?, ?, ?)
+            ''',
+            (pantry_location_id, name, amount, unit)
+        )
+        pantry_item_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+    return pantry_item_id
+
+def update_pantry_item(item_id, name, amount, unit):
+    """Update a pantry item."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''
+        UPDATE pantry_items
+        SET name = ?, amount = ?, unit = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        ''',
+        (name, amount, unit, item_id)
+    )
+    conn.commit()
+    conn.close()
+
+def delete_pantry_item(item_id):
+    """Delete a pantry item."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM pantry_items WHERE id = ?', (item_id,))
+    conn.commit()
+    conn.close()
+
+
+def _build_pantry_lookup(pantry_items):
+    pantry_lookup = {}
+    for item in pantry_items:
+        item = dict(item)
+        family, normalized_amount = normalize_unit_amount(item['amount'], item['unit'])
+        if family:
+            pantry_key = (item['name'].lower(), family)
+            pantry_lookup[pantry_key] = pantry_lookup.get(pantry_key, 0) + normalized_amount
+        else:
+            pantry_key = (item['name'].lower(), item['unit'])
+            pantry_lookup[pantry_key] = pantry_lookup.get(pantry_key, 0) + item['amount']
+    return pantry_lookup
+
+
+def _get_menu_required_ingredients(menu_id, target_servings):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''
+        SELECT mi.recipe_id, r.base_servings, i.name, i.amount, i.unit
+        FROM menu_items mi
+        JOIN recipes r ON mi.recipe_id = r.id
+        JOIN ingredients i ON r.id = i.recipe_id
+        WHERE mi.menu_id = ? AND mi.recipe_id IS NOT NULL
+        ''',
+        (menu_id,)
+    )
+    items = cursor.fetchall()
+    conn.close()
+
+    shopping_list = {}
+    for item in items:
+        item = dict(item)
+        multiplier = target_servings / item['base_servings']
+        amount = item['amount'] * multiplier
+        key = (item['name'].lower(), item['unit'])
+
+        if key in shopping_list:
+            shopping_list[key]['amount'] += amount
+        else:
+            shopping_list[key] = {
+                'name': item['name'],
+                'amount': amount,
+                'unit': item['unit']
+            }
+
+    return shopping_list
+
+
+def _calculate_menu_pantry_coverage(shopping_list, pantry_items):
+    pantry_lookup = _build_pantry_lookup(pantry_items)
+
+    result = []
+    pantry_coverage = []
+    for ingredient in shopping_list.values():
+        family, normalized_required_amount = normalize_unit_amount(ingredient['amount'], ingredient['unit'])
+
+        if family:
+            pantry_key = (ingredient['name'].lower(), family)
+            pantry_amount = pantry_lookup.get(pantry_key, 0)
+            missing_amount = max(normalized_required_amount - pantry_amount, 0)
+            covered_amount = min(normalized_required_amount, pantry_amount)
+            missing_amount = convert_from_base_unit(missing_amount, ingredient['unit'])
+            covered_amount = convert_from_base_unit(covered_amount, ingredient['unit'])
+        else:
+            pantry_key = (ingredient['name'].lower(), ingredient['unit'])
+            pantry_amount = pantry_lookup.get(pantry_key, 0)
+            missing_amount = max(ingredient['amount'] - pantry_amount, 0)
+            covered_amount = min(ingredient['amount'], pantry_amount)
+
+        if covered_amount > 0:
+            pantry_coverage.append({
+                'name': ingredient['name'],
+                'amount': covered_amount,
+                'unit': ingredient['unit']
+            })
+
+        if missing_amount > 0:
+            result.append({
+                'name': ingredient['name'],
+                'amount': missing_amount,
+                'unit': ingredient['unit'],
+                'required_amount': ingredient['amount'],
+                'pantry_amount': covered_amount
+            })
+
+    result.sort(key=lambda x: x['name'].lower())
+    pantry_coverage.sort(key=lambda x: x['name'].lower())
+
+    return {
+        'ingredients': result,
+        'pantry_coverage': pantry_coverage,
+        'all_covered': len(shopping_list) > 0 and len(result) == 0
+    }
+
+
+def consume_menu_from_pantry(menu_id, pantry_location_id, servings=None):
+    """Consume pantry stock used to cover a menu shopping list."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM menus WHERE id = ?', (menu_id,))
+    menu = cursor.fetchone()
+    if not menu:
+        conn.close()
+        return None
+
+    menu = dict(menu)
+    target_servings = servings or menu['servings']
+    conn.close()
+
+    shopping_list = _get_menu_required_ingredients(menu_id, target_servings)
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''
+        SELECT *
+        FROM pantry_items
+        WHERE pantry_location_id = ?
+        ORDER BY name COLLATE NOCASE, id
+        ''',
+        (pantry_location_id,)
+    )
+    pantry_items = [dict(row) for row in cursor.fetchall()]
+
+    consumed_items = []
+    for ingredient in shopping_list.values():
+        family, normalized_required_amount = normalize_unit_amount(ingredient['amount'], ingredient['unit'])
+        matching_items = []
+        available_total = 0
+
+        for pantry_item in pantry_items:
+            if pantry_item['name'].lower() != ingredient['name'].lower():
+                continue
+
+            if family:
+                pantry_family, normalized_amount = normalize_unit_amount(pantry_item['amount'], pantry_item['unit'])
+                if pantry_family != family:
+                    continue
+                matching_items.append((pantry_item, normalized_amount))
+                available_total += normalized_amount
+            elif pantry_item['unit'] == ingredient['unit']:
+                matching_items.append((pantry_item, pantry_item['amount']))
+                available_total += pantry_item['amount']
+
+        amount_to_consume = min(normalized_required_amount, available_total) if family else min(ingredient['amount'], available_total)
+
+        for pantry_item, available_amount in matching_items:
+            if amount_to_consume <= 0:
+                break
+
+            used_amount = min(amount_to_consume, available_amount)
+            reduction = convert_from_base_unit(used_amount, pantry_item['unit']) if family else used_amount
+            new_amount = max(pantry_item['amount'] - reduction, 0)
+
+            if new_amount <= 0.00001:
+                cursor.execute('DELETE FROM pantry_items WHERE id = ?', (pantry_item['id'],))
+            else:
+                cursor.execute(
+                    '''
+                    UPDATE pantry_items
+                    SET amount = ?, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ?
+                    ''',
+                    (new_amount, pantry_item['id'])
+                )
+
+            pantry_item['amount'] = new_amount
+            amount_to_consume -= used_amount
+
+            consumed_items.append({
+                'name': ingredient['name'],
+                'amount': convert_from_base_unit(used_amount, ingredient['unit']) if family else used_amount,
+                'unit': ingredient['unit']
+            })
+
+    conn.commit()
+    conn.close()
+
+    return {
+        'menu_name': menu['name'],
+        'servings': target_servings,
+        'consumed_items': consumed_items
+    }
+
 # Menu planning functions
 MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'evening_fika']
 
@@ -276,7 +684,7 @@ def delete_menu(menu_id):
     conn.commit()
     conn.close()
 
-def get_menu_shopping_list(menu_id, servings=None):
+def get_menu_shopping_list(menu_id, servings=None, pantry_location_id=None):
     """Get aggregated shopping list for a menu."""
     conn = get_db()
     cursor = conn.cursor()
@@ -291,41 +699,15 @@ def get_menu_shopping_list(menu_id, servings=None):
     menu = dict(menu)
     target_servings = servings or menu['servings']
     
-    # Get all recipes in the menu with their ingredients
-    cursor.execute('''
-        SELECT mi.recipe_id, r.base_servings, i.name, i.amount, i.unit
-        FROM menu_items mi
-        JOIN recipes r ON mi.recipe_id = r.id
-        JOIN ingredients i ON r.id = i.recipe_id
-        WHERE mi.menu_id = ? AND mi.recipe_id IS NOT NULL
-    ''', (menu_id,))
-    
-    items = cursor.fetchall()
     conn.close()
-    
-    # Aggregate ingredients
-    shopping_list = {}
-    for item in items:
-        item = dict(item)
-        multiplier = target_servings / item['base_servings']
-        amount = item['amount'] * multiplier
-        key = (item['name'].lower(), item['unit'])
-        
-        if key in shopping_list:
-            shopping_list[key]['amount'] += amount
-        else:
-            shopping_list[key] = {
-                'name': item['name'],
-                'amount': amount,
-                'unit': item['unit']
-            }
-    
-    # Convert to list and sort
-    result = list(shopping_list.values())
-    result.sort(key=lambda x: x['name'].lower())
+    shopping_list = _get_menu_required_ingredients(menu_id, target_servings)
+    pantry_items = get_all_pantry_items(pantry_location_id) if pantry_location_id else []
+    coverage_data = _calculate_menu_pantry_coverage(shopping_list, pantry_items)
     
     return {
         'menu_name': menu['name'],
         'servings': target_servings,
-        'ingredients': result
+        'ingredients': coverage_data['ingredients'],
+        'pantry_coverage': coverage_data['pantry_coverage'],
+        'all_covered': coverage_data['all_covered']
     }

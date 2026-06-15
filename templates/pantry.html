@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skafferi - Matsedel</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <span class="logo-icon">🍳</span>
+                    <span class="logo-text">Matsedel</span>
+                </a>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Recept</a>
+                    <a href="/menus" class="nav-link">Matsedlar</a>
+                    <div class="nav-dropdown">
+                        <button type="button" class="nav-link nav-dropdown-toggle active">Admin</button>
+                        <div class="nav-dropdown-menu">
+                            <a href="/editor" class="nav-dropdown-item">Lägg till recept</a>
+                            <a href="/skafferi" class="nav-dropdown-item active">Skafferi</a>
+                        </div>
+                    </div>
+                    <a href="/#about" class="nav-link">Om oss</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero hero-small">
+        <div class="container">
+            <h1>🥫 Skafferi</h1>
+            <p>Håll koll på vilka ingredienser och mängder du har hemma</p>
+        </div>
+    </section>
+
+    <section class="create-menu-section pantry-section">
+        <div class="container pantry-layout">
+            <div class="create-menu-card pantry-form-card">
+                <h2>Lägg till i skafferiet</h2>
+                <div class="pantry-location-toolbar">
+                    <div class="form-group">
+                        <label for="pantryLocationSelect">Skafferi</label>
+                        <select id="pantryLocationSelect" required></select>
+                    </div>
+                    <div class="pantry-location-actions">
+                        <label>Hantera valt skafferi</label>
+                        <div class="pantry-location-inline">
+                            <button type="button" class="btn btn-secondary" id="renamePantryLocationBtn">Byt namn</button>
+                            <button type="button" class="btn btn-secondary" id="deletePantryLocationBtn">Ta bort</button>
+                        </div>
+                    </div>
+                    <form id="pantryLocationForm" class="pantry-location-form">
+                        <label for="newPantryLocation">Nytt skafferi</label>
+                        <div class="pantry-location-inline">
+                            <input type="text" id="newPantryLocation" placeholder="T.ex. Stuga" required>
+                            <button type="submit" class="btn btn-secondary">Skapa</button>
+                        </div>
+                    </form>
+                </div>
+                <form id="pantryForm" class="create-menu-form">
+                    <div class="form-row pantry-form-row">
+                        <div class="form-group">
+                            <label for="pantryName">Ingrediens</label>
+                            <input type="text" id="pantryName" required placeholder="T.ex. Havregryn">
+                        </div>
+                        <div class="form-group">
+                            <label for="pantryAmount">Mängd</label>
+                            <input type="number" id="pantryAmount" min="0" step="0.01" required placeholder="T.ex. 2">
+                        </div>
+                        <div class="form-group">
+                            <label for="pantryUnit">Enhet</label>
+                            <select id="pantryUnit" required>
+                                <option value="" disabled selected>Välj enhet</option>
+                                <option value="g">g</option>
+                                <option value="kg">kg</option>
+                                <option value="ml">ml</option>
+                                <option value="cl">cl</option>
+                                <option value="dl">dl</option>
+                                <option value="l">l</option>
+                                <option value="tsk">tsk</option>
+                                <option value="msk">msk</option>
+                                <option value="krm">krm</option>
+                                <option value="st">st</option>
+                                <option value="pkt">pkt</option>
+                                <option value="burk">burk</option>
+                                <option value="knippe">knippe</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="editor-actions pantry-actions">
+                        <button type="submit" class="btn btn-primary">Spara i skafferiet</button>
+                    </div>
+                    <p id="pantryMessage" class="editor-message" aria-live="polite"></p>
+                </form>
+            </div>
+
+            <div class="pantry-list-section">
+                <div class="pantry-list-header">
+                    <h2>Nuvarande inventering</h2>
+                    <button type="button" class="btn btn-secondary" id="reloadPantryBtn">Uppdatera</button>
+                </div>
+                <div id="pantryItems" class="pantry-grid">
+                    <div class="loading">Laddar skafferi...</div>
+                </div>
+
+                <div class="pantry-overview-section">
+                    <h2>Alla skafferier</h2>
+                    <div id="pantryOverview" class="pantry-overview-grid">
+                        <div class="loading">Laddar översikt...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Matsedel</h3>
+                    <p>Recept för storkok och utemiljö</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Snabblänkar</h4>
+                    <a href="/">Alla recept</a>
+                    <a href="/menus">Matsedlar</a>
+                    <a href="/skafferi">Skafferi</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Matsedel. Gjord med ❤️ för friluftsliv.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/pantry.js"></script>
+</body>
+</html>
