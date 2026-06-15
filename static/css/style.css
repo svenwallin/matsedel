@@ -1397,20 +1397,50 @@ body {
 
 .pantry-low-stock {
     margin-top: 16px;
-    padding: 14px 16px;
-    border-radius: 10px;
-    background: #fff7e8;
-    border: 1px solid #f2d29b;
+    display: grid;
+    gap: 10px;
 }
 
 .pantry-low-stock-compact {
     margin-top: 14px;
 }
 
+.pantry-low-stock-warning {
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+}
+
+.pantry-low-stock-warning-low {
+    background: #fff7e8;
+    border-color: #f2d29b;
+}
+
+.pantry-low-stock-warning-very-low {
+    background: #fff0e3;
+    border-color: #f0b36b;
+}
+
+.pantry-low-stock-warning-empty {
+    background: #ffe9ea;
+    border-color: #e48b93;
+}
+
 .pantry-low-stock-title {
     font-weight: 800;
-    color: #9a5a00;
     margin-bottom: 8px;
+}
+
+.pantry-low-stock-warning-low .pantry-low-stock-title {
+    color: #9a5a00;
+}
+
+.pantry-low-stock-warning-very-low .pantry-low-stock-title {
+    color: #b85b00;
+}
+
+.pantry-low-stock-warning-empty .pantry-low-stock-title {
+    color: #b4232f;
 }
 
 .pantry-low-stock-list {
@@ -1424,8 +1454,19 @@ body {
     justify-content: space-between;
     gap: 12px;
     padding: 6px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.pantry-low-stock-warning-low .pantry-low-stock-list li {
     color: #7a4900;
-    border-bottom: 1px solid rgba(154, 90, 0, 0.12);
+}
+
+.pantry-low-stock-warning-very-low .pantry-low-stock-list li {
+    color: #8c4700;
+}
+
+.pantry-low-stock-warning-empty .pantry-low-stock-list li {
+    color: #8f1d28;
 }
 
 .pantry-low-stock-list li:last-child {

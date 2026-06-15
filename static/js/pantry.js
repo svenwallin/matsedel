@@ -19,6 +19,21 @@ const LOW_STOCK_THRESHOLDS = {
     knippe: 1
 };
 
+const STOCK_WARNING_LEVELS = {
+    low: {
+        title: 'Dags att fylla på',
+        className: 'low'
+    },
+    veryLow: {
+        title: 'Mycket lite kvar',
+        className: 'very-low'
+    },
+    empty: {
+        title: 'Slut i lager',
+        className: 'empty'
+    }
+};
+
 function showPantryMessage(text, isError) {
     const el = document.getElementById('pantryMessage');
     el.textContent = text;
@@ -95,22 +110,50 @@ function pantrySummaryBadges(summary) {
     `;
 }
 
-function getLowStockItems(items) {
-    return items.filter((item) => {
-        const unit = (item.unit || '').trim().toLowerCase();
-        const threshold = LOW_STOCK_THRESHOLDS[unit] ?? 1;
-        return Number(item.amount || 0) <= threshold;
+function getStockWarningLevel(item) {
+    const unit = (item.unit || '').trim().toLowerCase();
+    const threshold = LOW_STOCK_THRESHOLDS[unit] ?? 1;
+    const amount = Number(item.amount || 0);
+
+    if (amount <= 0) {
+        return 'empty';
+    }
+
+    if (amount <= threshold * 0.5) {
+        return 'veryLow';
+    }
+
+    if (amount <= threshold) {
+        return 'low';
+    }
+
+    return null;
+}
+
+function getStockWarnings(items) {
+    return items.reduce((accumulator, item) => {
+        const level = getStockWarningLevel(item);
+        if (level) {
+            accumulator[level].push(item);
+        }
+        return accumulator;
+    }, {
+        low: [],
+        veryLow: [],
+        empty: []
     });
 }
 
-function lowStockTemplate(items, compact = false) {
-    if (!Array.isArray(items) || items.length === 0) {
-        return '<p class="pantry-low-stock-empty">Inga varor har låg nivå just nu.</p>';
+function stockWarningSectionTemplate(levelKey, items) {
+    if (!items.length) {
+        return '';
     }
 
+    const config = STOCK_WARNING_LEVELS[levelKey];
+
     return `
-        <div class="pantry-low-stock ${compact ? 'pantry-low-stock-compact' : ''}">
-            <p class="pantry-low-stock-title">Lågt i lager</p>
+        <div class="pantry-low-stock-warning pantry-low-stock-warning-${config.className}">
+            <p class="pantry-low-stock-title">${config.title}</p>
             <ul class="pantry-low-stock-list">
                 ${items.map((item) => `
                     <li>
@@ -119,6 +162,25 @@ function lowStockTemplate(items, compact = false) {
                     </li>
                 `).join('')}
             </ul>
+        </div>
+    `;
+}
+
+function lowStockTemplate(items, compact = false) {
+    const warnings = getStockWarnings(items);
+    const warningSections = [
+        stockWarningSectionTemplate('low', warnings.low),
+        stockWarningSectionTemplate('veryLow', warnings.veryLow),
+        stockWarningSectionTemplate('empty', warnings.empty)
+    ].join('');
+
+    if (!warningSections) {
+        return '<p class="pantry-low-stock-empty">Inga varor har låg nivå just nu.</p>';
+    }
+
+    return `
+        <div class="pantry-low-stock ${compact ? 'pantry-low-stock-compact' : ''}">
+            ${warningSections}
         </div>
     `;
 }
@@ -139,13 +201,12 @@ function renderCurrentPantrySummary(items) {
 
 function pantryOverviewTemplate(locationName, items) {
     const summary = getPantrySummary(items);
-    const lowStockItems = getLowStockItems(items);
 
     return `
         <section class="pantry-overview-card">
             <h3>${locationName}</h3>
             ${pantrySummaryBadges(summary)}
-            ${lowStockTemplate(lowStockItems)}
+            ${lowStockTemplate(items)}
             ${items.length === 0 ? '<p class="loading">Tomt skafferi.</p>' : `
                 <ul class="pantry-overview-list">
                     ${items.map((item) => `
