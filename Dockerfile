@@ -10,8 +10,8 @@ COPY app/ ./app/
 COPY templates/ ./templates/
 COPY static/ ./static/
 
-# Create data directory for SQLite
-RUN mkdir -p /app/data
+# Create data directory for SQLite and uploads with proper permissions
+RUN mkdir -p /app/data/uploads && chmod 755 /app/data && chmod 755 /app/data/uploads
 
 WORKDIR /app/app
 

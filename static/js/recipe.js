@@ -30,6 +30,8 @@ async function loadRecipe(recipeId) {
         }
         
         currentRecipe = await response.json();
+        console.log('Recipe loaded:', currentRecipe);
+        console.log('Image URL:', currentRecipe.image_url);
         displayRecipe(currentRecipe);
     } catch (error) {
         console.error('Error loading recipe:', error);
@@ -42,6 +44,9 @@ async function loadRecipe(recipeId) {
 function displayRecipe(recipe) {
     const container = document.getElementById('recipeContent');
     const icon = RECIPE_ICONS[recipe.category] || RECIPE_ICONS.default;
+    
+    console.log('Displaying recipe, image_url:', recipe.image_url, 'type:', typeof recipe.image_url);
+    
     const imageMarkup = recipe.image_url
         ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-large">`
         : icon;

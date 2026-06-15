@@ -73,10 +73,13 @@ function displayRecipes(recipes) {
         return;
     }
     
-    grid.innerHTML = recipes.map(recipe => `
+    grid.innerHTML = recipes.map(recipe => {
+        const hasImage = recipe.image_url && recipe.image_url.trim() !== '';
+        console.log(`Recipe "${recipe.name}": image_url="${recipe.image_url}", hasImage=${hasImage}`);
+        return `
         <article class="recipe-card" onclick="window.location.href='/recipe/${recipe.id}'">
             <div class="recipe-image">
-                ${recipe.image_url
+                ${hasImage
                     ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-card">`
                     : (RECIPE_ICONS[recipe.category] || RECIPE_ICONS.default)}
             </div>
@@ -90,7 +93,7 @@ function displayRecipes(recipes) {
                 </div>
             </div>
         </article>
-    `).join('');
+    `}).join('');
 }
 
 // Filter by category
