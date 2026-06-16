@@ -288,6 +288,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 4rem;
+    color: var(--white);
 }
 
 .recipe-photo-card {
@@ -370,6 +371,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 8rem;
+    color: var(--white);
 }
 
 .recipe-photo-large {
