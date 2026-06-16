@@ -120,37 +120,35 @@ function displayMenu(menu) {
     
     for (let day = 1; day <= menu.num_days; day++) {
         const dayData = menu.days[day] || {};
-        const dayServings = menu.day_servings && (menu.day_servings[day] ?? menu.day_servings[String(day)]) != null
-            ? (menu.day_servings[day] ?? menu.day_servings[String(day)])
-            : '';
         
         html += `<tr class="menu-row">`;
-        html += `
-            <td class="day-cell">
-                <div class="day-cell-content">
-                    <span class="day-number">Dag ${day}</span>
-                    <label class="day-servings-label" for="dayServings-${day}">Port.</label>
-                    <input
-                        id="dayServings-${day}"
-                        class="day-servings-input"
-                        type="number"
-                        min="1"
-                        step="1"
-                        value="${dayServings}"
-                        placeholder="${menu.servings}"
-                        onchange="updateDayServings(${day}, this.value)"
-                    >
-                </div>
-            </td>
-        `;
+        html += `<td class="day-cell"><span class="day-number">Dag ${day}</span></td>`;
         
         for (const mealType of ['breakfast', 'lunch', 'dinner', 'evening_fika']) {
             const meal = dayData[mealType] || {};
             const hasRecipe = meal.recipe_id != null;
+            const mealServings = meal.day_servings != null ? meal.day_servings : '';
+            const servingsControl = `
+                <div class="meal-servings-control" onclick="event.stopPropagation()">
+                    <label for="mealServings-${day}-${mealType}">Port.</label>
+                    <input
+                        id="mealServings-${day}-${mealType}"
+                        class="meal-servings-input"
+                        type="number"
+                        min="1"
+                        step="1"
+                        value="${mealServings}"
+                        placeholder="${menu.servings}"
+                        onclick="event.stopPropagation()"
+                        onchange="updateMealServings(${day}, '${mealType}', this.value)"
+                    >
+                </div>
+            `;
             
             if (hasRecipe) {
                 html += `
                     <td class="meal-cell has-recipe" onclick="openRecipeSelector(${day}, '${mealType}')">
+                        ${servingsControl}
                         <div class="recipe-card">
                             <div class="recipe-card-name">${meal.recipe_name}</div>
                             ${meal.cooking_time ? `<div class="recipe-card-time">⏱️ ${meal.cooking_time}</div>` : ''}
@@ -163,6 +161,7 @@ function displayMenu(menu) {
             } else {
                 html += `
                     <td class="meal-cell empty" onclick="openRecipeSelector(${day}, '${mealType}')">
+                        ${servingsControl}
                         <div class="empty-slot">
                             <span class="plus-icon">+</span>
                             <span class="add-text">Välj recept</span>
@@ -201,7 +200,7 @@ function displayMenu(menu) {
     document.getElementById('shoppingListSection').style.display = 'block';
 }
 
-async function updateDayServings(day, value) {
+async function updateMealServings(day, mealType, value) {
     const pathParts = window.location.pathname.split('/');
     const menuId = pathParts[pathParts.length - 1];
     const trimmed = String(value ?? '').trim();
@@ -213,11 +212,12 @@ async function updateDayServings(day, value) {
     }
 
     try {
-        const response = await fetch(`/api/menus/${menuId}/day-servings`, {
+        const response = await fetch(`/api/menus/${menuId}/meal-servings`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 day_number: day,
+                meal_type: mealType,
                 servings_override: trimmed === '' ? null : Number(trimmed)
             })
         });
