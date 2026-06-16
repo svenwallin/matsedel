@@ -1330,9 +1330,14 @@ body {
 
 .pantry-layout {
     display: grid;
-    grid-template-columns: minmax(320px, 420px) 1fr;
+    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
     gap: 30px;
     align-items: start;
+}
+
+.pantry-form-card,
+.pantry-list-section {
+    min-width: 0;
 }
 
 .pantry-form-row {
@@ -1359,6 +1364,7 @@ body {
 .pantry-location-inline {
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
 }
 
 .pantry-location-inline input,
@@ -1630,6 +1636,10 @@ body {
 @media (max-width: 1024px) {
     .menu-table th.meal-column {
         min-width: 140px;
+    }
+
+    .pantry-layout {
+        grid-template-columns: 1fr;
     }
     
     .recipe-card-name {
