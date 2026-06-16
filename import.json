@@ -125,3 +125,384 @@
         "id": 7,
         "titel": "Scrambled Tacos / Färs- och äggröra",
         "kategori": "Lunch",
+        "tillagningstid": "10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Köttfärs eller vegofärs (färdigstekt hemma)", "mangd": "200 g"},
+            {"namn": "Stora ägg", "mangd": "3 st"},
+            {"namn": "Tacokrydda", "mangd": "1 msk"},
+            {"namn": "Vatten", "mangd": "0,5 dl"},
+            {"namn": "Små tortillabröd", "mangd": "4 st"},
+            {"namn": "Tacosalsa", "mangd": "4 msk"}
+        ],
+        "instruktioner": [
+            "Lägg den färdigstekta färsen i stormkökets stekpanna tillsammans med tacokryddan och vattnet. Låt det fräsa ihop under ett par minuter så att färsen blir varm.",
+            "Knäck i äggen direkt i stekpannan tillsammans med färsen.",
+            "Rör runt kontinuerligt med en slev på medelvärme tills äggen har koagulerat och bildat en krämig röra med färsen.",
+            "Fördela röran i tortillabröden och rulla ihop med en klick salsa."
+        ]
+    },
+    {
+        "id": 8,
+        "titel": "Wraps med stekt Halloumi och Avokadokräm",
+        "kategori": "Lunch",
+        "tillagningstid": "10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Halloumi eller grillost", "mangd": "1 paket (200 g)"},
+            {"namn": "Färdig avokadokräm eller guacamole", "mangd": "1 tub/burk (ca 150 g)"},
+            {"namn": "Babyspenat", "mangd": "1 näve (ca 30 g)"},
+            {"namn": "Rödlök (skivad)", "mangd": "0,5 st"},
+            {"namn": "Stora tortillabröd", "mangd": "2 st"},
+            {"namn": "Olja eller smör till stekning", "mangd": "1 tsk"}
+        ],
+        "instruktioner": [
+            "Skär halloumin i ca 1 cm tjocka skivor.",
+            "Hetta upp lite olja eller smör i stormkökets stekpanna och lägg i osten.",
+            "Stek i ca 2–3 minuter på varje sida på medelhög värme tills skivorna har fått en fin, gyllenbrun färg.",
+            "Bre ut avokadokrämen på tortillabröden. Lägg på spenat, skivad rödlök och den nystekta halloumin. Rulla ihop till täta wraps."
+        ]
+    },
+    {
+        "id": 9,
+        "titel": "Krämig Nudelwok med jordnötssmak",
+        "kategori": "Lunch",
+        "tillagningstid": "8 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Snabbnudlar (inklusive kryddpåsar)", "mangd": "2 paket"},
+            {"namn": "Jordnötssmör (gärna creamy)", "mangd": "2–3 msk"},
+            {"namn": "Frysta wokgrönsaker (tinade)", "mangd": "2 dl"},
+            {"namn": "Vatten till kokning", "mangd": "Efter behov"}
+        ],
+        "instruktioner": [
+            "Koka upp vatten i kastrullen. Tillsätt nudlarna och grönsakerna samtidigt.",
+            "Låt koka i ca 3 minuter tills nudlarna är mjuka.",
+            "Häll av det mesta av vattnet, men se till att spara ungefär 0,5 dl vätska i botten på kastrullen.",
+            "Tillsätt nudlarnas kryddpåsar och jordnötssmöret. Sätt tillbaka kastrullen på svag värme och rör om kraftigt i ungefär en minut tills jordnötssmöret smält samman med vattnet till en tjock, krämig sås."
+        ]
+    },
+    {
+        "id": 10,
+        "titel": "Klassisk Pinnbrödskorv",
+        "kategori": "Middag",
+        "tillagningstid": "15-20 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Grillkorv (valfri sort)", "mangd": "4-6 st"},
+            {"namn": "Korvbröd", "mangd": "4-6 st"},
+            {"namn": "Vetemjöl (till deg)", "mangd": "2,5 dl"},
+            {"namn": "Bakpulver (till deg)", "mangd": "1 tsk"},
+            {"namn": "Salt (till deg)", "mangd": "0,5 tsk"},
+            {"namn": "Vatten (till deg)", "mangd": "Ca 1 dl"},
+            {"namn": "Ketchup och senap", "mangd": "Efter smak"}
+        ],
+        "instruktioner": [
+            "Blanda mjöl, bakpulver och salt i en plastpåse hemma. Tillsätt vatten på plats och knåda till en fast deg i påsen.",
+            "Sätt en korv på en grillpinne.",
+            "Ta en bit deg, rulla ut till en smal längd och linda den som en spiral runt korven.",
+            "Grilla långsamt över eldens glöd tills brödet är genomgräddat och korven är varm."
+        ]
+    },
+    {
+        "id": 11,
+        "titel": "Krämig Tortellonipasta på stormkök",
+        "kategori": "Middag",
+        "tillagningstid": "10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Färsk tortelloni (t.ex. spenat & ricotta)", "mangd": "1 paket (250 g)"},
+            {"namn": "Färdig tomatsås eller mjukost på tub", "mangd": "1 burk/tub (ca 200 g)"},
+            {"namn": "Parmesanost (riven)", "mangd": "4 msk"},
+            {"namn": "Vatten till kokning", "mangd": "Efter behov"}
+        ],
+        "instruktioner": [
+            "Koka tortellonin i stormkökets kastrull enligt tidsanvisningen på paketet.",
+            "Häll av vattnet helt.",
+            "Rör ner tomatsåsen eller mjukosten direkt i kastrullen på svag värme så att allt blir varmt.",
+            "Servera direkt och toppa med rikligt med parmesanost."
+        ]
+    },
+    {
+        "id": 12,
+        "titel": "Allt-i-ett Tacopanna",
+        "kategori": "Middag",
+        "tillagningstid": "15 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Nöt- eller vegofärs (rå)", "mangd": "300 g"},
+            {"namn": "Tacokrydda", "mangd": "1 påse"},
+            {"namn": "Majs på burk", "mangd": "1 liten burk (ca 150 g)"},
+            {"namn": "Krossade tomater", "mangd": "1 förpackning (ca 400 g)"},
+            {"namn": "Nachochips", "mangd": "1 påse"},
+            {"namn": "Smör eller olja till stekning", "mangd": "1 msk"}
+        ],
+        "instruktioner": [
+            "Hetta upp smör eller olja i stormkökets djupa panna eller en gjutjärnspanna över elden.",
+            "Bryna färsen tills den är helt genomstekt.",
+            "Tillsätt tacokrydda, majs och krossade tomater. Låt allt puttra ihop i ca 5 minuter.",
+            "Ät direkt ur pannan genom skopa upp maten med nachochips."
+        ]
+    },
+    {
+        "id": 13,
+        "titel": "Foliepaket med Lax och Potatis",
+        "kategori": "Middag",
+        "tillagningstid": "15-20 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Laxfiléer", "mangd": "2 st (ca 250 g)"},
+            {"namn": "Färdigkokt potatis (skivad)", "mangd": "4-6 st"},
+            {"namn": "Smör", "mangd": "2 msk"},
+            {"namn": "Färsk dill (hackad)", "mangd": "0,5 kruka"},
+            {"namn": "Salt och peppar", "mangd": "Efter smak"},
+            {"namn": "Aluminiumfolie", "mangd": "2 rejäla bitar"}
+        ],
+        "instruktioner": [
+            "Lägg ut två bitar aluminiumfolie och smörj mitten lätt.",
+            "Fördela den skivade potatisen i botten och lägg en laxfilé ovanpå i varje paket.",
+            "Krydda med salt, peppar och dill. Lägg på en rejäl klick smör.",
+            "Vik ihop till täta, luftiga paket och lägg på glöden eller på ett galler i ca 12-15 minuter tills laxen är klar."
+        ]
+    },
+    {
+        "id": 14,
+        "titel": "Hajkbomb (Köttfärs & Grönsaker i folie)",
+        "kategori": "Middag",
+        "tillagningstid": "20-25 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Nöt- eller vegofärs (rå)", "mangd": "250 g"},
+            {"namn": "Rå potatis (skivad mycket tunt)", "mangd": "3 st"},
+            {"namn": "Morot (skivad mycket tunt)", "mangd": "1 st"},
+            {"namn": "Gul lök (skivad)", "mangd": "0,5 st"},
+            {"namn": "Smör", "mangd": "2 msk"},
+            {"namn": "Salt, peppar och piffi-allkrydda", "mangd": "Efter smak"},
+            {"namn": "Aluminiumfolie", "mangd": "2 dubbla bitar"}
+        ],
+        "instruktioner": [
+            "Använd dubbla lager folie per paket för att det inte ska bränna fast. Smörj ytan.",
+            "Platta ut hälften av färsen som en tunn biff i botten på varje folieark.",
+            "Lägg på de tunt skivade potatisarna, morötterna och löken (viktigt att de är tunna så de hinner bli mjuka).",
+            "Krydda ordentligt, lägg på smör och stäng paketen noggrant. Lägg direkt i glöden i ca 15-20 minuter. Vänd halvvägs."
+        ]
+    },
+    {
+        "id": 15,
+        "titel": "Quesadillas på stormkök",
+        "kategori": "Middag",
+        "tillagningstid": "10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Tortillabröd (medium)", "mangd": "4 st"},
+            {"namn": "Riven ost", "mangd": "2-3 dl"},
+            {"namn": "Rökt skinka (strimlad) eller svarta bönor", "mangd": "1 dl"},
+            {"namn": "Pizzasås eller tacosalsa", "mangd": "4 msk"}
+        ],
+        "instruktioner": [
+            "Bred ut lite sås på ena halvan av ett tortillabröd.",
+            "Fyll med ost och skinka/bönor, och vik över den andra brödhalvan så det blir en halvmåne.",
+            "Lägg quesadillan i stormkökets torra stekpanna på låg till medelhög värme.",
+            "Stek i ca 2-3 minuter per sida tills osten har smält och brödet blivit frasigt."
+        ]
+    },
+    {
+        "id": 16,
+        "titel": "Halloumi- eller Grillostburgare",
+        "kategori": "Middag",
+        "tillagningstid": "10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Halloumi eller grillost", "mangd": "1 paket (200 g)"},
+            {"namn": "Hamburgerbröd", "mangd": "2-4 st"},
+            {"namn": "Hamburgerdressing", "mangd": "Efter smak"},
+            {"namn": "Salladsblad och skivad tomat", "mangd": "Efter smak"},
+            {"namn": "Lite olja till stekning", "mangd": "1 tsk"}
+        ],
+        "instruktioner": [
+            "Skär osten i tjocka skivor (passande till burgarbröden).",
+            "Stek eller grilla osten på hög värme i en panna med lite olja tills den får en fin gyllene yta (ca 2 min per sida).",
+            "Värm gärna bröden snabbt i pannan efteråt.",
+            "Montera burgarna med dressing, sallad, tomat och den varma osten."
+        ]
+    },
+    {
+        "id": 17,
+        "titel": "Snabb Linsgryta med Curry och Kokosmjölk",
+        "kategori": "Middag",
+        "tillagningstid": "15 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Röda linser (trockade)", "mangd": "1,5 dl"},
+            {"namn": "Kokosmjölk", "mangd": "1 burk (400 ml)"},
+            {"namn": "Röd eller gul currypasta", "mangd": "1-2 tsk"},
+            {"namn": "Grönsaksbuljongtärning", "mangd": "1 st"},
+            {"namn": "Vatten", "mangd": "1 dl"},
+            {"namn": "Mjukt bröd (t.ex. naan eller pitabröd)", "mangd": "2 st"}
+        ],
+        "instruktioner": [
+            "Fräs currypastan snabbt i botten på stormkökets kastrull.",
+            "Tillsätt kokosmjölk, vatten, linser och en smulad buljongtärning.",
+            "Låt grytan koka upp och sedan sjuda på svag värme under regelbunden omrörning i ca 10-12 minuter.",
+            "När linserna är mjuka är grytan klar. Serveras med brödet vid sidan."
+        ]
+    },
+    {
+        "id": 18,
+        "titel": "Lyxig Nudelwok med Kyckling/Tofu",
+        "kategori": "Middag",
+        "tillagningstid": "15 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Snabbnudlar (utan kryddpåse)", "mangd": "2 portioner"},
+            {"namn": "Färdigstekt kyckling (tärnad) eller stekt tofu", "mangd": "200 g"},
+            {"namn": "Wokgrönsaker (färska eller tinade)", "mangd": "3 dl"},
+            {"namn": "Färdig woksås (t.ex. Teriyaki på påse)", "mangd": "1 påse (ca 100 ml)"},
+            {"namn": "Olja till stekning", "mangd": "1 msk"},
+            {"namn": "Vatten till nudelkokning", "mangd": "Efter behov"}
+        ],
+        "instruktioner": [
+            "Koka nudlarna i kastrullen enligt anvisning, häll av vattnet och ställ nudlarna åt sidan.",
+            "Hetta upp olja i stormkökets panna/djupa kastrull och stek wokgrönsakerna i några minuter.",
+            "Tillsätt det färdigstekta proteinet (kyckling eller tofu) så att det blir varmt.",
+            "Vänd ner de kokta nudlarna, häll över woksåsen och rör om ordentligt över värmen i 1 minut innan servering."
+        ]
+    },
+    {
+        "id": 19,
+        "titel": "Grillade Varma Mackor i mackjärn",
+        "kategori": "Middag",
+        "tillagningstid": "10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Formfranska (gärna lite tjockare)", "mangd": "4 skivor"},
+            {"namn": "Ost (skivad)", "mangd": "6-8 skivor"},
+            {"namn": "Rökt skinka", "mangd": "4 skivor"},
+            {"namn": "Tomat (skivad)", "mangd": "1 st"},
+            {"namn": "Smör (till brödets utsida)", "mangd": "2 msk"}
+        ],
+        "instruktioner": [
+            "Montera mackorna med ost, skinka och tomatskivor.",
+            "Bre ett generöst lager smör på brödskivornas yttersta sidor.",
+            "Placera mackan i ett mackjärn och låt ligga över eldens glöd i ca 3-4 minuter per sida, eller stek i stormkökets stekpanna på låg värme tills osten har smält."
+        ]
+    },
+    {
+        "id": 20,
+        "titel": "Klassiskt Pinnbröd",
+        "kategori": "Bröd",
+        "tillagningstid": "15-20 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Vetemjöl (blandas hemma)", "mangd": "2,5 dl"},
+            {"namn": "Bakpulver (blandas hemma)", "mangd": "1 tsk"},
+            {"namn": "Salt (blandas hemma)", "mangd": "0,5 tsk"},
+            {"namn": "Vatten (tillsätts på plats)", "mangd": "Ca 1 dl"}
+        ],
+        "instruktioner": [
+            "Blanda de torra ingredienserna i en plastpåse hemma.",
+            "Ute i naturen: Häll lite vatten i taget direkt i påsen och knåda utanpå påsen tills det blir en smidig, ganska fast deg.",
+            "Ta en bit deg, rulla ut den till en lång smal korv och linda den i spiral runt spetsen på en ren grillpinne.",
+            "Grilla brödet långsamt över eldens glöd (inte direkt i flammorna) i ca 10–15 minuter tills det lossnar lätt från pinnen och är genomgräddat."
+        ]
+    },
+    {
+        "id": 21,
+        "titel": "Snabba Pannbröd (Scones i panna)",
+        "kategori": "Bröd",
+        "tillagningstid": "15 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Vetemjöl eller grahamsmjöl (blandas hemma)", "mangd": "3 dl"},
+            {"namn": "Bakpulver (blandas hemma)", "mangd": "1,5 tsk"},
+            {"namn": "Salt (blandas hemma)", "mangd": "0,5 tsk"},
+            {"namn": "Smör eller olja", "mangd": "1 msk + lite extra till stekning"},
+            {"namn": "Vatten eller mjölk (tillsätts på plats)", "mangd": "Ca 1,25 dl"}
+        ],
+        "instruktioner": [
+            "Blanda mjöl, bakpulver och salt i en påse eller bunke. Nyp i smöret (eller häll i oljan).",
+            "Tillsätt vätskan och rör snabbt ihop till en deg. Dela degen i två delar och platta ut till runda, ganska tunna kakor (ca 1 cm tjocka).",
+            "Hetta upp lite smör/olja i stormkökets stekpanna på låg värme.",
+            "Grädda bröden i pannan i ca 4-5 minuter per sida. Använd ett lock (eller stormkökets kastrull uppochner) över pannan så bakas brödet bättre rakt igenom."
+        ]
+    },
+    {
+        "id": 22,
+        "titel": "Grillad Banan med Choklad (S'mores-style)",
+        "kategori": "Kvällsfika",
+        "tillagningstid": "10-15 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Bananer", "mangd": "2 st"},
+            {"namn": "Mjölkchoklad eller mörk choklad (bruten i bitar)", "mangd": "0,5 kaka (ca 50 g)"},
+            {"namn": "Mini-marshmallows (valfritt)", "mangd": "0,5 dl"},
+            {"namn": "Aluminiumfolie", "mangd": "2 bitar"}
+        ],
+        "instruktioner": [
+            "Låt skalet sitta kvar på bananerna. Skär ett djupt snitt på längden längs bananens insida (akta så du inte skär helt igenom botten på skalet).",
+            "Peta in chokladbitarna (och ev. marshmallows) tätt i snittet.",
+            "Placera bananerna på en bit aluminiumfolie och vik ihop till ett löst men tätt paket.",
+            "Lägg paketen direkt i eldens glöd eller på stormkökets galler i ca 8–10 minuter tills chokladen har smält helt och bananen är mjuk."
+        ]
+    },
+    {
+        "id": 23,
+        "titel": "Stekta Kanelbullars-äpplen",
+        "kategori": "Kvällsfika",
+        "tillagningstid": "10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Äpplen", "mangd": "2 st"},
+            {"namn": "Smör", "mangd": "1 msk"},
+            {"namn": "Strösocker eller råsocker", "mangd": "1 msk"},
+            {"namn": "Kanel", "mangd": "1 tsk"},
+            {"namn": "Kardemumma", "mangd": "0,5 tsk"}
+        ],
+        "instruktioner": [
+            "Kärna ur äpplena och skär dem i mindre tärningar eller klyftor (kan förberedas hemma i en burk).",
+            "Smält smöret i stormkökets stekpanna eller en gjutjärnspanna över elden.",
+            "Tillsätt äppelbitarna, socker, kanel och kardemumma.",
+            "Stek på medelvärme under omrörning i ca 5 minuter tills äpplena har mjuknat och socker/smör har bildat en seg, god kolasås. Ät direkt ur pannan eller kåsan."
+        ]
+    },
+    {
+        "id": 24,
+        "titel": "Utomhus-Blåbärspaj i stekpanna",
+        "kategori": "Efterrätt",
+        "tillagningstid": "10-15 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Färsk blåbär (plockade på plats eller medtagna)", "mangd": "3 dl"},
+            {"namn": "Havregryn (till smuldeg)", "mangd": "1,5 dl"},
+            {"namn": "Vetemjöl (till smuldeg)", "mangd": "2 msk"},
+            {"namn": "Socker (till smuldeg)", "mangd": "2 msk"},
+            {"namn": "Smör", "mangd": "2 msk"},
+            {"namn": "Vaniljsås på tub eller kåsa med marsan", "mangd": "Efter smak"}
+        ],
+        "instruktioner": [
+            "Blanda havregryn, vetemjöl och socker i en påse hemma.",
+            "Smält 1 msk smör i stormkökets stekpanna och häll i blandningen från påsen. Rosta på medelvärme i några minuter tills det blir gyllenbrunt och knaprigt. Häll över i en kåsa så länge.",
+            "Lägg blåbären i pannan med resten av smöret och en extra tesked socker. Låt bären värmas upp i 1-2 minuter så de börjar safta sig.",
+            "Fördel bären i två kåsor, häll det rostade havremålet ovanpå och ringla över färdig vaniljsås."
+        ]
+    },
+    {
+        "id": 25,
+        "titel": "Chokladfondue i kastrull",
+        "kategori": "Efterrätt",
+        "tillagningstid": "5-10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Mörk choklad eller mjölkchoklad", "mangd": "1 kaka (100 g)"},
+            {"namn": "Vispgrädde", "mangd": "0,5 dl"},
+            {"namn": "Frukt i bitar (t.ex. jordgubbar, banan eller äpple)", "mangd": "Valfri mängd"},
+            {"namn": "Marshmallows eller söta kex", "mangd": "Valfri mängd"}
+        ],
+        "instruktioner": [
+            "Förbered frukten hemma eller skär i bitar på plats.",
+            "Häll grädden i stormkökets kastrull och värm försiktigt (den ska inte koka stormande).",
+            "Bryt chokladen i mindre bitar och rör ner i den varma grädden.",
+            "Ta kastrullen från lågan och rör om tills chokladen smält till en slät, tjock sås. Doppa frukten och marshmallowsen direkt i chokladen med grillpinnar eller gafflar."
+        ]
+    }
+]
