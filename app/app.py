@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from database import (init_db, get_all_recipes, get_recipe, add_recipe, update_recipe,
                       delete_recipe,
                       get_recipes_by_category, get_categories, search_recipes,
-                      create_menu, get_all_menus, get_menu, update_menu_item, update_menu_day_servings,
+                      create_menu, get_all_menus, get_menu, update_menu_item, update_menu_meal_servings,
                       delete_menu, get_menu_shopping_list, MEAL_TYPES,
                       get_all_pantry_items, add_pantry_item, update_pantry_item,
                       delete_pantry_item, get_all_pantry_locations,
@@ -396,18 +396,23 @@ def api_update_menu_item(menu_id):
     
     return jsonify({'message': 'Menu item updated successfully'})
 
-@app.route('/api/menus/<int:menu_id>/day-servings', methods=['PUT'])
-def api_update_menu_day_servings(menu_id):
-    """Update day-level servings override for a menu."""
+@app.route('/api/menus/<int:menu_id>/meal-servings', methods=['PUT'])
+def api_update_menu_meal_servings(menu_id):
+    """Update meal-level servings override for a menu."""
     data = request.json or {}
 
-    if 'day_number' not in data:
-        return jsonify({'error': 'day_number is required'}), 400
+    required = ['day_number', 'meal_type']
+    if not all(k in data for k in required):
+        return jsonify({'error': 'day_number and meal_type are required'}), 400
 
     try:
         day_number = int(data['day_number'])
     except (TypeError, ValueError):
         return jsonify({'error': 'day_number must be a number'}), 400
+
+    meal_type = data.get('meal_type')
+    if meal_type not in MEAL_TYPES:
+        return jsonify({'error': f'Invalid meal_type. Must be one of: {MEAL_TYPES}'}), 400
 
     servings_override = data.get('servings_override')
     if servings_override in ('', None):
@@ -421,8 +426,13 @@ def api_update_menu_day_servings(menu_id):
         if servings_override < 1:
             return jsonify({'error': 'servings_override must be at least 1'}), 400
 
-    update_menu_day_servings(menu_id=menu_id, day_number=day_number, servings_override=servings_override)
-    return jsonify({'message': 'Day servings override updated successfully'})
+    update_menu_meal_servings(
+        menu_id=menu_id,
+        day_number=day_number,
+        meal_type=meal_type,
+        servings_override=servings_override
+    )
+    return jsonify({'message': 'Meal servings override updated successfully'})
 
 @app.route('/api/menus/<int:menu_id>/shopping-list')
 def api_shopping_list(menu_id):

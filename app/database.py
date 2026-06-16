@@ -694,8 +694,8 @@ def update_menu_item(menu_id, day_number, meal_type, recipe_id):
     conn.commit()
     conn.close()
 
-def update_menu_day_servings(menu_id, day_number, servings_override):
-    """Update servings override for an entire day in a menu."""
+def update_menu_meal_servings(menu_id, day_number, meal_type, servings_override):
+    """Update servings override for a specific meal in a menu."""
     conn = get_db()
     cursor = conn.cursor()
 
@@ -703,9 +703,9 @@ def update_menu_day_servings(menu_id, day_number, servings_override):
         '''
         UPDATE menu_items
         SET day_servings = ?
-        WHERE menu_id = ? AND day_number = ?
+        WHERE menu_id = ? AND day_number = ? AND meal_type = ?
         ''',
-        (servings_override, menu_id, day_number)
+        (servings_override, menu_id, day_number, meal_type)
     )
 
     conn.commit()
