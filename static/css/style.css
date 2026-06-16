@@ -1330,8 +1330,8 @@ body {
 
 .pantry-layout {
     display: grid;
-    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
-    gap: 30px;
+    grid-template-columns: 1fr;
+    gap: 20px;
     align-items: start;
 }
 
@@ -1353,8 +1353,16 @@ body {
 .pantry-location-toolbar {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
     margin-bottom: 20px;
+}
+
+#pantryLocationSelect {
+    max-width: 280px;
+}
+
+.pantry-list-section {
+    margin-top: 4px;
 }
 
 .pantry-location-actions {
