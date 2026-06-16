@@ -1,0 +1,127 @@
+[
+    {
+        "id": 1,
+        "titel": "Klassisk Havregrynsgröt med Äpple och Kanel",
+        "kategori": "Frukost",
+        "tillagningstid": "5-10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Havregryn", "mangd": "2 dl"},
+            {"namn": "Vatten", "mangd": "4,5 dl"},
+            {"namn": "Salt", "mangd": "0,5 tsk"},
+            {"namn": "Äpple (tärnat i förväg)", "mangd": "1 st"},
+            {"namn": "Kanel", "mangd": "1 tsk"},
+            {"namn": "Mjölk (eller växtbaserad mjölk)", "mangd": "Efter smak"}
+        ],
+        "instruktioner": [
+            "Mät upp havregryn, vatten, det tärnade äpplet, kanel och salt i stormkökets kastrull.",
+            "Koka upp på medelvärme under omrörning så att det inte bränner fast i botten.",
+            "Låt gröten småputtra i ca 3 minuter tills den har fått en krämig konsistens.",
+            "Servera direkt i kåsor tillsammans med lite kall mjölk."
+        ]
+    },
+    {
+        "id": 2,
+        "titel": "Frasiga Krinnelplättar (Bananpannkakor)",
+        "kategori": "Frukost",
+        "tillagningstid": "10-15 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Mogna bananer (mosade)", "mangd": "2 st"},
+            {"namn": "Ägg", "mangd": "2 st"},
+            {"namn": "Havremjöl eller vetemjöl", "mangd": "4 msk"},
+            {"namn": "Smör eller olja till stekning", "mangd": "1 msk"},
+            {"namn": "Sylt eller honung på tub", "mangd": "Efter smak"}
+        ],
+        "instruktioner": [
+            "Blanda ihop de mosade bananerna, äggen och mjölet i en plastpåse eller kåsa till en jämn smet.",
+            "Hetta upp lite smör eller olja i stormkökets stekpanna på medelvärme.",
+            "Klicka ut små plättar i pannan och stek i ca 2 minuter på varje sida tills de är gyllenbruna.",
+            "Toppa med en klick sylt eller ringla över lite honung."
+        ]
+    },
+    {
+        "id": 3,
+        "titel": "Frukostburritos med Ägg och Bacon",
+        "kategori": "Frukost",
+        "tillagningstid": "10-15 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Ägg", "mangd": "4 st"},
+            {"namn": "Bacon eller kalkonbacon (klippt i bitar)", "mangd": "1 paket (ca 140 g)"},
+            {"namn": "Små tortillabröd", "mangd": "4 st"},
+            {"namn": "Riven ost", "mangd": "1 dl"},
+            {"namn": "Salt och svartpeppar", "mangd": "En nypa av varje"}
+        ],
+        "instruktioner": [
+            "Stek baconbitarna krispiga i stormkökets stekpanna. Sänk sedan värmen.",
+            "Vispa snabbt ihop äggen i en kåsa med lite salt och peppar, och häll ner dem direkt i pannan med baconet.",
+            "Rör runt hela tiden tills äggen har stannat och bildat en krämig ägröra.",
+            "Fördela äggröran på tortillabröden, strö över riven ost och rulla ihop till burritos."
+        ]
+    },
+    {
+        "id": 4,
+        "titel": "Krämig Tortellini med Pesto och Spenat",
+        "kategori": "Lunch",
+        "tillagningstid": "5-10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Färsk tortellini (t.ex. spenat/ricotta eller prosciutto)", "mangd": "1 paket (250 g)"},
+            {"namn": "Grön eller röd pesto", "mangd": "3–4 msk"},
+            {"namn": "Färsk babyspenat", "mangd": "1 stor näve (ca 30 g)"},
+            {"namn": "Parmesanost (riven eller färdigskivad)", "mangd": "4 msk"},
+            {"namn": "Vatten till kokning", "mangd": "Efter behov"}
+        ],
+        "instruktioner": [
+            "Koka upp vatten i stormköket och lägg i tortellonin. Koka i ca 3–4 minuter enligt anvisningen på paketet.",
+            "Häll av nästan allt vatten, men spara ungefär en matsked i botten av kastrullen.",
+            "Ta kastrullen från värmen och rör ner peston och spenaten direkt. Rör om tills spenaten sjunker ihop av restvärmen.",
+            "Servera i kåsor och toppa med parmesanost."
+        ]
+    },
+    {
+        "id": 5,
+        "titel": "Jägarmacka / Varma klämmackor",
+        "kategori": "Lunch",
+        "tillagningstid": "10 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Formfranska eller surdegsbröd", "mangd": "4 skivor"},
+            {"namn": "Rökt skinka eller kalkon", "mangd": "4–6 skivor"},
+            {"namn": "Ost", "mangd": "6–8 tjocka skivor"},
+            {"namn": "Senap (valfritt)", "mangd": "2 tsk"},
+            {"namn": "Smör (att breda på brödets utsidor)", "mangd": "2 msk"}
+        ],
+        "instruktioner": [
+            "Lägg ihop mackorna med senap, skinka och ost emellan.",
+            "Bre smör på utsidorna av de yttersta brödskivorna.",
+            "Om du använder mackjärn över eld: Lägg mackan i järnet och håll över glöden. Vänd med jämna mellanrum i ca 5–8 minuter tills ytan är gyllenbrun.",
+            "Om du använder stormkök: Lägg mackan direkt i den torra stekpannan på låg till medelhög värme. Stek några minuter per sida tills osten har smält ordentligt."
+        ]
+    },
+    {
+        "id": 6,
+        "titel": "Snabb lins- och kokossoppa",
+        "kategori": "Lunch",
+        "tillagningstid": "15 min",
+        "portioner": 2,
+        "ingredienser": [
+            {"namn": "Röda linser (torkade)", "mangd": "1,5 dl"},
+            {"namn": "Kokosmjölk", "mangd": "1 burk (400 ml)"},
+            {"namn": "Vatten", "mangd": "1,5 dl"},
+            {"namn": "Grönsaksbuljongpulver", "mangd": "1 msk"},
+            {"namn": "Currypulver", "mangd": "1 tsk"},
+            {"namn": "Salt", "mangd": "En nypa"}
+        ],
+        "instruktioner": [
+            "Mät upp röda linser, kokosmjölk, vatten, curry och buljong i stormkökets kastrull.",
+            "Koka upp soppan under omrörning så dat linserna inte fastnar i botten.",
+            "Sänk värmen och låt soppan småputtra i ca 10–12 minuter. Rör om då och då.",
+            "När linserna är helt mjuka och soppan har tjocknat är den klar. Smaka av med lite salt."
+        ]
+    },
+    {
+        "id": 7,
+        "titel": "Scrambled Tacos / Färs- och äggröra",
+        "kategori": "Lunch",
