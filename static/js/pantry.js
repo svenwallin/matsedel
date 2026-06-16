@@ -289,7 +289,6 @@ async function addPantryItem(event) {
         showPantryMessage('Ingrediens sparad i skafferiet.', false);
         resetPantryForm();
         loadPantryItems();
-        loadPantryOverview();
     } catch (error) {
         console.error('Error saving pantry item:', error);
         showPantryMessage('Kunde inte spara varan.', true);
@@ -322,7 +321,6 @@ async function addPantryLocation(event) {
         showPantryMessage('Nytt skafferi skapat.', false);
         await loadPantryLocations(data.id);
         loadPantryItems();
-        loadPantryOverview();
     } catch (error) {
         console.error('Error creating pantry location:', error);
         showPantryMessage('Kunde inte skapa skafferiet.', true);
@@ -354,7 +352,6 @@ async function renamePantryLocation() {
 
         showPantryMessage('Skafferiet bytte namn.', false);
         await loadPantryLocations(pantryLocationId);
-        loadPantryOverview();
     } catch (error) {
         console.error('Error renaming pantry location:', error);
         showPantryMessage('Kunde inte byta namn på skafferiet.', true);
@@ -384,7 +381,6 @@ async function deletePantryLocation() {
         showPantryMessage('Skafferiet togs bort.', false);
         await loadPantryLocations();
         loadPantryItems();
-        loadPantryOverview();
     } catch (error) {
         console.error('Error deleting pantry location:', error);
         showPantryMessage('Kunde inte ta bort skafferiet.', true);
@@ -417,7 +413,6 @@ async function savePantryEdit(form, itemId) {
 
     showPantryMessage('Skafferiet uppdaterat.', false);
     loadPantryItems();
-    loadPantryOverview();
 }
 
 async function deletePantryItem(itemId) {
@@ -436,21 +431,17 @@ async function deletePantryItem(itemId) {
 
     showPantryMessage('Ingrediensen togs bort.', false);
     loadPantryItems();
-    loadPantryOverview();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     loadPantryLocations().then(() => {
         loadPantryItems();
-        loadPantryOverview();
     });
 
     document.getElementById('pantryForm').addEventListener('submit', addPantryItem);
     document.getElementById('pantryLocationForm').addEventListener('submit', addPantryLocation);
     document.getElementById('pantryLocationSelect').addEventListener('change', loadPantryItems);
-    document.getElementById('pantryLocationSelect').addEventListener('change', loadPantryOverview);
     document.getElementById('reloadPantryBtn').addEventListener('click', loadPantryItems);
-    document.getElementById('reloadPantryBtn').addEventListener('click', loadPantryOverview);
     document.getElementById('renamePantryLocationBtn').addEventListener('click', renamePantryLocation);
     document.getElementById('deletePantryLocationBtn').addEventListener('click', deletePantryLocation);
 
