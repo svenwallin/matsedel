@@ -1351,7 +1351,7 @@ body {
 
 .pantry-list-section {
     display: grid;
-    gap: 20px;
+    gap: 24px;
 }
 
 .pantry-list-header {
