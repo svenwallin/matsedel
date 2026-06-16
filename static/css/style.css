@@ -881,10 +881,41 @@ body {
     vertical-align: middle;
 }
 
+.day-cell-content {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 8px 4px;
+}
+
 .day-number {
     color: var(--white);
     font-weight: 700;
     font-size: 1.1rem;
+}
+
+.day-servings-label {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.day-servings-input {
+    width: 74px;
+    padding: 6px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--primary-dark);
+    font-weight: 700;
+    text-align: center;
+}
+
+.day-servings-input::placeholder {
+    color: #5f7a6f;
+    opacity: 1;
 }
 
 .meal-cell {

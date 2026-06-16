@@ -101,11 +101,14 @@ def init_db():
             menu_id INTEGER NOT NULL,
             day_number INTEGER NOT NULL,
             meal_type TEXT NOT NULL,
+            day_servings INTEGER,
             recipe_id INTEGER,
             FOREIGN KEY (menu_id) REFERENCES menus(id) ON DELETE CASCADE,
             FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE SET NULL
         )
     ''')
+
+    _ensure_column(cursor, 'menu_items', 'day_servings', 'day_servings INTEGER')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS pantry_items (
@@ -428,7 +431,7 @@ def _get_menu_required_ingredients(menu_id, target_servings):
     cursor = conn.cursor()
     cursor.execute(
         '''
-        SELECT mi.recipe_id, r.base_servings, i.name, i.amount, i.unit
+        SELECT mi.recipe_id, mi.day_number, mi.day_servings, r.base_servings, i.name, i.amount, i.unit
         FROM menu_items mi
         JOIN recipes r ON mi.recipe_id = r.id
         JOIN ingredients i ON r.id = i.recipe_id
@@ -442,7 +445,8 @@ def _get_menu_required_ingredients(menu_id, target_servings):
     shopping_list = {}
     for item in items:
         item = dict(item)
-        multiplier = target_servings / item['base_servings']
+        effective_servings = item['day_servings'] if item['day_servings'] is not None else target_servings
+        multiplier = effective_servings / item['base_servings']
         amount = item['amount'] * multiplier
         key = (item['name'].lower(), item['unit'])
 
@@ -643,6 +647,7 @@ def get_menu(menu_id):
         return None
     
     menu = dict(menu)
+    menu['day_servings'] = {}
     
     # Get all menu items with recipe details
     cursor.execute('''
@@ -668,6 +673,8 @@ def get_menu(menu_id):
         day = item['day_number']
         if day not in menu['days']:
             menu['days'][day] = {}
+        if day not in menu['day_servings']:
+            menu['day_servings'][day] = item.get('day_servings')
         menu['days'][day][item['meal_type']] = item
     
     conn.close()
@@ -684,6 +691,23 @@ def update_menu_item(menu_id, day_number, meal_type, recipe_id):
         WHERE menu_id = ? AND day_number = ? AND meal_type = ?
     ''', (recipe_id, menu_id, day_number, meal_type))
     
+    conn.commit()
+    conn.close()
+
+def update_menu_day_servings(menu_id, day_number, servings_override):
+    """Update servings override for an entire day in a menu."""
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        '''
+        UPDATE menu_items
+        SET day_servings = ?
+        WHERE menu_id = ? AND day_number = ?
+        ''',
+        (servings_override, menu_id, day_number)
+    )
+
     conn.commit()
     conn.close()
 

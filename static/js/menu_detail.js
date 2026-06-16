@@ -120,9 +120,29 @@ function displayMenu(menu) {
     
     for (let day = 1; day <= menu.num_days; day++) {
         const dayData = menu.days[day] || {};
+        const dayServings = menu.day_servings && (menu.day_servings[day] ?? menu.day_servings[String(day)]) != null
+            ? (menu.day_servings[day] ?? menu.day_servings[String(day)])
+            : '';
         
         html += `<tr class="menu-row">`;
-        html += `<td class="day-cell"><span class="day-number">Dag ${day}</span></td>`;
+        html += `
+            <td class="day-cell">
+                <div class="day-cell-content">
+                    <span class="day-number">Dag ${day}</span>
+                    <label class="day-servings-label" for="dayServings-${day}">Port.</label>
+                    <input
+                        id="dayServings-${day}"
+                        class="day-servings-input"
+                        type="number"
+                        min="1"
+                        step="1"
+                        value="${dayServings}"
+                        placeholder="${menu.servings}"
+                        onchange="updateDayServings(${day}, this.value)"
+                    >
+                </div>
+            </td>
+        `;
         
         for (const mealType of ['breakfast', 'lunch', 'dinner', 'evening_fika']) {
             const meal = dayData[mealType] || {};
@@ -179,6 +199,40 @@ function displayMenu(menu) {
     
     // Show shopping list section
     document.getElementById('shoppingListSection').style.display = 'block';
+}
+
+async function updateDayServings(day, value) {
+    const pathParts = window.location.pathname.split('/');
+    const menuId = pathParts[pathParts.length - 1];
+    const trimmed = String(value ?? '').trim();
+
+    if (trimmed !== '' && (!Number.isInteger(Number(trimmed)) || Number(trimmed) < 1)) {
+        alert('Portionsoverride måste vara ett heltal från 1 och uppåt.');
+        loadMenu(menuId);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/menus/${menuId}/day-servings`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                day_number: day,
+                servings_override: trimmed === '' ? null : Number(trimmed)
+            })
+        });
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            alert(data.error || 'Kunde inte uppdatera dagsportioner.');
+        }
+
+        loadMenu(menuId);
+    } catch (error) {
+        console.error('Error updating day servings:', error);
+        alert('Kunde inte uppdatera dagsportioner.');
+        loadMenu(menuId);
+    }
 }
 
 // Open recipe selector modal
