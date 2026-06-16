@@ -5,7 +5,7 @@ services:
     build: .
     container_name: matsedel-app
     volumes:
-      - db-data:/app/data
+      - ./data:/app/data
     networks:
       - matsedel-net
 
@@ -17,14 +17,11 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./static:/app/static:ro
-      - db-data:/app/data:ro
+      - ./data:/app/data:ro
     depends_on:
       - app
     networks:
       - matsedel-net
-
-volumes:
-  db-data:
 
 networks:
   matsedel-net:
