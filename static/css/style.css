@@ -1312,6 +1312,34 @@ body {
     text-decoration: none;
 }
 
+.recipe-delete-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.recipe-delete-item {
+    background: var(--bg-color);
+    border: 1px solid #e3e7ea;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+}
+
+.recipe-delete-name {
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.recipe-delete-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .editor-current-image {
     margin-bottom: 20px;
     padding: 20px;

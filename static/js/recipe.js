@@ -85,7 +85,6 @@ function displayRecipe(recipe) {
                         <button onclick="calculateIngredients()">Beräkna</button>
                         <div class="recipe-actions">
                             <a href="/recipe/${recipe.id}/edit" class="btn btn-primary">✏️ Redigera recept</a>
-                            <button type="button" class="btn btn-secondary" onclick="deleteCurrentRecipe()">🗑️ Ta bort recept</button>
                         </div>
                     </div>
                 </div>
@@ -172,32 +171,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-async function deleteCurrentRecipe() {
-    if (!currentRecipe || !currentRecipe.id) {
-        alert('Kunde inte hitta receptet att ta bort.');
-        return;
-    }
-
-    const ok = confirm(`Vill du ta bort receptet "${currentRecipe.name}"? Detta går inte att ångra.`);
-    if (!ok) {
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/recipes/${currentRecipe.id}`, {
-            method: 'DELETE'
-        });
-
-        if (!response.ok) {
-            const data = await response.json().catch(() => ({}));
-            alert(data.error || 'Kunde inte ta bort receptet.');
-            return;
-        }
-
-        window.location.href = '/';
-    } catch (error) {
-        console.error('Error deleting recipe:', error);
-        alert('Något gick fel vid borttagning av receptet.');
-    }
-}

@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recept - Matsedel</title>
+    <title>Ta Bort Recept - Matsedel</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="container">
             <div class="header-content">
@@ -20,10 +19,10 @@
                     <a href="/" class="nav-link">Recept</a>
                     <a href="/menus" class="nav-link">Matsedlar</a>
                     <div class="nav-dropdown">
-                        <button type="button" class="nav-link nav-dropdown-toggle">Admin</button>
+                        <button type="button" class="nav-link nav-dropdown-toggle active">Admin</button>
                         <div class="nav-dropdown-menu">
                             <a href="/editor" class="nav-dropdown-item">Lägg till recept</a>
-                            <a href="/recipe-delete" class="nav-dropdown-item">Ta bort recept</a>
+                            <a href="/recipe-delete" class="nav-dropdown-item active">Ta bort recept</a>
                             <a href="/skafferi" class="nav-dropdown-item">Skafferi</a>
                         </div>
                     </div>
@@ -33,19 +32,26 @@
         </div>
     </header>
 
-    <!-- Recipe Detail -->
-    <main class="recipe-detail">
+    <section class="hero hero-small">
         <div class="container">
-            <a href="/" class="back-link">← Tillbaka till alla recept</a>
-            
-            <div class="recipe-content" id="recipeContent">
-                <!-- Recipe loaded dynamically -->
-                <div class="loading">Laddar recept...</div>
+            <h1>🗑️ Ta bort recept</h1>
+            <p>Välj recept att radera permanent</p>
+        </div>
+    </section>
+
+    <main class="create-menu-section">
+        <div class="container">
+            <div class="create-menu-card">
+                <h2>Alla recept</h2>
+                <p class="editor-help">När du tar bort ett recept går det inte att ångra.</p>
+                <div id="deleteRecipeList" class="recipe-delete-list">
+                    <p class="loading">Laddar recept...</p>
+                </div>
+                <p id="deleteRecipeMessage" class="editor-message" aria-live="polite"></p>
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -56,8 +62,8 @@
                 <div class="footer-links">
                     <h4>Snabblänkar</h4>
                     <a href="/">Alla recept</a>
-                    <a href="/#categories">Kategorier</a>
-                    <a href="/#about">Om oss</a>
+                    <a href="/menus">Matsedlar</a>
+                    <a href="/editor">Lägg till recept</a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -67,6 +73,6 @@
     </footer>
 
     <script src="/static/js/nav.js"></script>
-    <script src="/static/js/recipe.js"></script>
+    <script src="/static/js/recipe_delete.js"></script>
 </body>
 </html>
