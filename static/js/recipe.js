@@ -83,9 +83,6 @@ function displayRecipe(recipe) {
                         <input type="number" id="servingsInput" min="1" max="100" value="${recipe.base_servings}">
                         <span>portioner</span>
                         <button onclick="calculateIngredients()">Beräkna</button>
-                        <div class="recipe-actions">
-                            <a href="/recipe/${recipe.id}/edit" class="btn btn-primary">✏️ Redigera recept</a>
-                        </div>
                     </div>
                 </div>
             </div>

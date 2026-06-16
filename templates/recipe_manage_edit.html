@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matsedlar - Matsedel</title>
+    <title>Redigera Recept - Matsedel</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="container">
             <div class="header-content">
@@ -18,12 +17,12 @@
                 </a>
                 <nav class="nav">
                     <a href="/" class="nav-link">Recept</a>
-                    <a href="/menus" class="nav-link active">Matsedlar</a>
+                    <a href="/menus" class="nav-link">Matsedlar</a>
                     <div class="nav-dropdown">
-                        <button type="button" class="nav-link nav-dropdown-toggle">Admin</button>
+                        <button type="button" class="nav-link nav-dropdown-toggle active">Admin</button>
                         <div class="nav-dropdown-menu">
                             <a href="/editor" class="nav-dropdown-item">Lägg till recept</a>
-                            <a href="/recipe-manage-edit" class="nav-dropdown-item">Redigera recept</a>
+                            <a href="/recipe-manage-edit" class="nav-dropdown-item active">Redigera recept</a>
                             <a href="/recipe-delete" class="nav-dropdown-item">Ta bort recept</a>
                             <a href="/skafferi" class="nav-dropdown-item">Skafferi</a>
                         </div>
@@ -34,51 +33,24 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero hero-small">
         <div class="container">
-            <h1>📅 Planera Matsedel</h1>
-            <p>Skapa matsedlar för läger och aktiviteter</p>
+            <h1>✏️ Redigera recept</h1>
+            <p>Välj recept att redigera</p>
         </div>
     </section>
 
-    <!-- Create Menu Form -->
-    <section class="create-menu-section">
+    <main class="create-menu-section">
         <div class="container">
             <div class="create-menu-card">
-                <h2>Skapa ny matsedel</h2>
-                <form id="createMenuForm" class="create-menu-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="menuName">Namn på matsedel</label>
-                            <input type="text" id="menuName" placeholder="T.ex. Sommarläger 2026" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="numDays">Antal dagar</label>
-                            <input type="number" id="numDays" min="1" max="14" value="3" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="servings">Antal portioner</label>
-                            <input type="number" id="servings" min="1" max="200" value="10" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Skapa matsedel</button>
-                </form>
+                <h2>Alla recept</h2>
+                <div id="editRecipeList" class="recipe-delete-list">
+                    <p class="loading">Laddar recept...</p>
+                </div>
             </div>
         </div>
-    </section>
+    </main>
 
-    <!-- Menus List -->
-    <section class="menus-section">
-        <div class="container">
-            <h2 class="section-title">Dina matsedlar</h2>
-            <div class="menus-grid" id="menusGrid">
-                <!-- Menus loaded dynamically -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -90,7 +62,7 @@
                     <h4>Snabblänkar</h4>
                     <a href="/">Alla recept</a>
                     <a href="/menus">Matsedlar</a>
-                    <a href="/#about">Om oss</a>
+                    <a href="/editor">Lägg till recept</a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -100,6 +72,6 @@
     </footer>
 
     <script src="/static/js/nav.js"></script>
-    <script src="/static/js/menus.js"></script>
+    <script src="/static/js/recipe_manage_edit.js"></script>
 </body>
 </html>

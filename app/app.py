@@ -62,6 +62,11 @@ def recipe_delete_page():
     """Recipe delete admin page."""
     return render_template('recipe_delete.html')
 
+@app.route('/recipe-manage-edit')
+def recipe_manage_edit_page():
+    """Recipe edit admin list page."""
+    return render_template('recipe_manage_edit.html')
+
 @app.route('/skafferi')
 def pantry_page():
     """Pantry inventory page."""
