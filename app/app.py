@@ -4,6 +4,7 @@ import logging
 from flask import Flask, render_template, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 from database import (init_db, get_all_recipes, get_recipe, add_recipe, update_recipe,
+                      delete_recipe,
                       get_recipes_by_category, get_categories, search_recipes,
                       create_menu, get_all_menus, get_menu, update_menu_item,
                       delete_menu, get_menu_shopping_list, MEAL_TYPES,
@@ -186,6 +187,16 @@ def api_update_recipe(recipe_id):
     )
     
     return jsonify({'id': recipe_id, 'message': 'Recipe updated successfully'}), 200
+
+@app.route('/api/recipes/<int:recipe_id>', methods=['DELETE'])
+def api_delete_recipe(recipe_id):
+    """Delete an existing recipe."""
+    existing_recipe = get_recipe(recipe_id)
+    if not existing_recipe:
+        return jsonify({'error': 'Recipe not found'}), 404
+
+    delete_recipe(recipe_id)
+    return jsonify({'message': 'Recipe deleted successfully'}), 200
 
 @app.route('/api/categories')
 def api_categories():

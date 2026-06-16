@@ -254,6 +254,18 @@ def update_recipe(recipe_id, name, description, category, base_servings, cooking
     conn.close()
     return recipe_id
 
+def delete_recipe(recipe_id):
+    """Delete a recipe and detach it from menu items."""
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute('UPDATE menu_items SET recipe_id = NULL WHERE recipe_id = ?', (recipe_id,))
+    cursor.execute('DELETE FROM ingredients WHERE recipe_id = ?', (recipe_id,))
+    cursor.execute('DELETE FROM recipes WHERE id = ?', (recipe_id,))
+
+    conn.commit()
+    conn.close()
+
 def get_all_pantry_locations():
     """Get all pantry locations."""
     conn = get_db()
