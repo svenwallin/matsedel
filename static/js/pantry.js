@@ -98,40 +98,6 @@ function pantryCardTemplate(item) {
     `;
 }
 
-function getPantrySummary(items) {
-    const unitTotals = items.reduce((accumulator, item) => {
-        const unit = item.unit || 'st';
-        accumulator[unit] = (accumulator[unit] || 0) + Number(item.amount || 0);
-        return accumulator;
-    }, {});
-
-    const uniqueIngredients = new Set(
-        items.map((item) => item.name.trim().toLowerCase())
-    ).size;
-
-    return {
-        rowCount: items.length,
-        uniqueIngredients,
-        unitTotals
-    };
-}
-
-function pantrySummaryBadges(summary) {
-    const totals = Object.entries(summary.unitTotals)
-        .sort(([left], [right]) => left.localeCompare(right, 'sv'))
-        .map(([unit, amount]) => `
-            <span class="pantry-summary-badge">${formatPantryAmount(amount)} ${unit}</span>
-        `)
-        .join('');
-
-    return `
-        <div class="pantry-summary-badges">
-            <span class="pantry-summary-badge pantry-summary-badge-strong">${summary.rowCount} poster</span>
-            <span class="pantry-summary-badge">${summary.uniqueIngredients} ingredienser</span>
-            ${totals}
-        </div>
-    `;
-}
 
 function getStockWarningLevel(item) {
     const unit = (item.unit || '').trim().toLowerCase();
@@ -211,27 +177,11 @@ function lowStockTemplate(items, compact = false) {
     `;
 }
 
-function renderCurrentPantrySummary(items) {
-    const container = document.getElementById('pantryCurrentSummary');
-
-    if (!Array.isArray(items) || items.length === 0) {
-        container.innerHTML = '<p class="loading">Ingen sammanfattning ännu.</p>';
-        return;
-    }
-
-    container.innerHTML = `
-        ${pantrySummaryBadges(getPantrySummary(items))}
-        ${lowStockTemplate(getLowStockItems(items), true)}
-    `;
-}
 
 function pantryOverviewTemplate(locationName, items) {
-    const summary = getPantrySummary(items);
-
     return `
         <section class="pantry-overview-card">
             <h3>${locationName}</h3>
-            ${pantrySummaryBadges(summary)}
             ${lowStockTemplate(items)}
             ${items.length === 0 ? '<p class="loading">Tomt skafferi.</p>' : `
                 <ul class="pantry-overview-list">
@@ -278,16 +228,13 @@ async function loadPantryItems() {
 
         if (!Array.isArray(items) || items.length === 0) {
             container.innerHTML = '<p class="loading">Skafferiet är tomt. Lägg till din första ingrediens ovan.</p>';
-            renderCurrentPantrySummary([]);
             return;
         }
 
         container.innerHTML = items.map(pantryCardTemplate).join('');
-        renderCurrentPantrySummary(items);
     } catch (error) {
         console.error('Error loading pantry items:', error);
         document.getElementById('pantryItems').innerHTML = '<p class="loading">Kunde inte ladda skafferiet.</p>';
-        document.getElementById('pantryCurrentSummary').innerHTML = '<p class="loading">Kunde inte ladda sammanfattningen.</p>';
     }
 }
 
