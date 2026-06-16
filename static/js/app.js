@@ -74,14 +74,15 @@ function displayRecipes(recipes) {
     }
     
     grid.innerHTML = recipes.map(recipe => {
+        const icon = RECIPE_ICONS[recipe.category] || RECIPE_ICONS.default;
         const hasImage = recipe.image_url && recipe.image_url.trim() !== '';
         console.log(`Recipe "${recipe.name}": image_url="${recipe.image_url}", hasImage=${hasImage}`);
         return `
         <article class="recipe-card" onclick="window.location.href='/recipe/${recipe.id}'">
             <div class="recipe-image">
                 ${hasImage
-                    ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-card">`
-                    : (RECIPE_ICONS[recipe.category] || RECIPE_ICONS.default)}
+                    ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-card" onerror="this.parentElement.textContent='${icon}';">`
+                    : icon}
             </div>
             <div class="recipe-info">
                 <span class="recipe-category">${recipe.category || 'Övrigt'}</span>

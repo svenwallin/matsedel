@@ -47,8 +47,9 @@ function displayRecipe(recipe) {
     
     console.log('Displaying recipe, image_url:', recipe.image_url, 'type:', typeof recipe.image_url);
     
-    const imageMarkup = recipe.image_url
-        ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-large">`
+    const hasImage = recipe.image_url && recipe.image_url.trim() !== '';
+    const imageMarkup = hasImage
+        ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-large" onerror="this.parentElement.textContent='${icon}';">`
         : icon;
     
     // Parse instructions into steps
