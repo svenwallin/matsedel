@@ -39,12 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.addEventListener('click', (event) => {
+    const handleOutsideInteraction = (event) => {
         const clickedInsideDropdown = event.target.closest('.nav-dropdown');
         if (!clickedInsideDropdown) {
             closeAll();
         }
-    });
+    };
+
+    document.addEventListener('click', handleOutsideInteraction);
+    document.addEventListener('touchstart', handleOutsideInteraction, { passive: true });
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
