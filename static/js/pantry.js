@@ -183,16 +183,6 @@ function pantryOverviewTemplate(locationName, items) {
         <section class="pantry-overview-card">
             <h3>${locationName}</h3>
             ${lowStockTemplate(items)}
-            ${items.length === 0 ? '<p class="loading">Tomt skafferi.</p>' : `
-                <ul class="pantry-overview-list">
-                    ${items.map((item) => `
-                        <li>
-                            <span>${item.name}</span>
-                            <span class="ingredient-amount">${formatPantryAmount(item.amount)} ${item.unit}</span>
-                        </li>
-                    `).join('')}
-                </ul>
-            `}
         </section>
     `;
 }
