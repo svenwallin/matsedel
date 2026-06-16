@@ -1358,7 +1358,11 @@ body {
 }
 
 #pantryLocationSelect {
-    max-width: 280px;
+    width: auto;
+    max-width: 220px;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+    line-height: 1.2;
 }
 
 .pantry-list-section {
