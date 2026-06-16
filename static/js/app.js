@@ -80,9 +80,10 @@ function displayRecipes(recipes) {
         return `
         <article class="recipe-card" onclick="window.location.href='/recipe/${recipe.id}'">
             <div class="recipe-image">
+                <span class="recipe-card-icon">${icon}</span>
                 ${hasImage
-                    ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-card" onerror="this.parentElement.textContent='${icon}';">`
-                    : icon}
+                    ? `<img src="${recipe.image_url}" alt="${recipe.name}" class="recipe-photo-card" onerror="this.remove();">`
+                    : ''}
             </div>
             <div class="recipe-info">
                 <span class="recipe-category">${recipe.category || 'Övrigt'}</span>
