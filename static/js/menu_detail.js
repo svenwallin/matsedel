@@ -125,8 +125,9 @@ function displayMenu(menu) {
         html += `<td class="day-cell"><span class="day-number">Dag ${day}</span></td>`;
         
         for (const mealType of ['breakfast', 'lunch', 'dinner', 'evening_fika']) {
-            const meal = dayData[mealType] || {};
-            const hasRecipe = meal.recipe_id != null;
+            const meal = dayData[mealType] || { recipes: [], day_servings: null };
+            const recipes = meal.recipes || [];
+            const hasRecipes = recipes.length > 0;
             const mealServings = meal.day_servings != null ? meal.day_servings : '';
             const servingsControl = `
                 <div class="meal-servings-control" onclick="event.stopPropagation()">
@@ -145,17 +146,26 @@ function displayMenu(menu) {
                 </div>
             `;
             
-            if (hasRecipe) {
+            if (hasRecipes) {
+                const recipesHtml = recipes.map(recipe => `
+                    <div class="recipe-card-multi">
+                        <div class="recipe-card-name">${recipe.recipe_name}</div>
+                        ${recipe.cooking_time ? `<div class="recipe-card-time">⏱️ ${recipe.cooking_time}</div>` : ''}
+                        <button class="remove-recipe-btn-small" onclick="event.stopPropagation(); removeRecipe(${day}, '${mealType}', ${recipe.id})" title="Ta bort recept">
+                            ✕
+                        </button>
+                    </div>
+                `).join('');
+                
                 html += `
-                    <td class="meal-cell has-recipe" onclick="openRecipeSelector(${day}, '${mealType}')">
+                    <td class="meal-cell has-recipe">
                         ${servingsControl}
-                        <div class="recipe-card">
-                            <div class="recipe-card-name">${meal.recipe_name}</div>
-                            ${meal.cooking_time ? `<div class="recipe-card-time">⏱️ ${meal.cooking_time}</div>` : ''}
-                            <button class="remove-recipe-btn" onclick="event.stopPropagation(); clearMeal(${day}, '${mealType}')" title="Ta bort recept">
-                                ✕ Ta bort
-                            </button>
+                        <div class="recipes-list">
+                            ${recipesHtml}
                         </div>
+                        <button class="add-more-recipe-btn" onclick="event.stopPropagation(); openRecipeSelector(${day}, '${mealType}')" title="Lägg till recept">
+                            + Lägg till
+                        </button>
                     </td>
                 `;
             } else {
@@ -284,14 +294,14 @@ function filterModalRecipes() {
     displayModalRecipes(filtered);
 }
 
-// Select a recipe
+// Select a recipe - now adds to the meal slot instead of replacing
 async function selectRecipe(recipeId) {
     const pathParts = window.location.pathname.split('/');
     const menuId = pathParts[pathParts.length - 1];
     
     try {
-        const response = await fetch(`/api/menus/${menuId}/items`, {
-            method: 'PUT',
+        const response = await fetch(`/api/menus/${menuId}/recipes`, {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 day_number: currentSelection.day,
@@ -304,15 +314,41 @@ async function selectRecipe(recipeId) {
             closeModal();
             loadMenu(menuId);
         } else {
-            alert('Kunde inte uppdatera matsedeln');
+            alert('Kunde inte lägga till receptet');
         }
     } catch (error) {
-        console.error('Error updating menu:', error);
-        alert('Kunde inte uppdatera matsedeln');
+        console.error('Error adding recipe:', error);
+        alert('Kunde inte lägga till receptet');
     }
 }
 
-// Clear a meal
+// Remove a specific recipe from a meal slot
+async function removeRecipe(day, mealType, menuItemId) {
+    const pathParts = window.location.pathname.split('/');
+    const menuId = pathParts[pathParts.length - 1];
+    
+    try {
+        const response = await fetch(`/api/menus/${menuId}/recipes/${menuItemId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                day_number: day,
+                meal_type: mealType
+            })
+        });
+        
+        if (response.ok) {
+            loadMenu(menuId);
+        } else {
+            alert('Kunde inte ta bort receptet');
+        }
+    } catch (error) {
+        console.error('Error removing recipe:', error);
+        alert('Kunde inte ta bort receptet');
+    }
+}
+
+// Clear a meal (legacy - kept for backward compatibility)
 async function clearMeal(day, mealType) {
     const pathParts = window.location.pathname.split('/');
     const menuId = pathParts[pathParts.length - 1];

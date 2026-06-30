@@ -635,7 +635,7 @@ def get_all_menus():
     return [dict(row) for row in menus]
 
 def get_menu(menu_id):
-    """Get a menu with all its items."""
+    """Get a menu with all its items (supporting multiple recipes per meal)."""
     conn = get_db()
     cursor = conn.cursor()
     
@@ -661,27 +661,47 @@ def get_menu(menu_id):
                 WHEN 'lunch' THEN 2 
                 WHEN 'dinner' THEN 3 
                 WHEN 'evening_fika' THEN 4 
-            END
+            END,
+            mi.id
     ''', (menu_id,))
     
     items = cursor.fetchall()
     
-    # Organize items by day
+    # Organize items by day - now supporting multiple recipes per meal
     menu['days'] = {}
     for item in items:
         item = dict(item)
         day = item['day_number']
+        meal_type = item['meal_type']
+        
         if day not in menu['days']:
             menu['days'][day] = {}
         if day not in menu['day_servings']:
             menu['day_servings'][day] = item.get('day_servings')
-        menu['days'][day][item['meal_type']] = item
+        
+        # Initialize meal slot as array if not exists
+        if meal_type not in menu['days'][day]:
+            menu['days'][day][meal_type] = {
+                'recipes': [],
+                'day_servings': item.get('day_servings')
+            }
+        
+        # Only add if there's an actual recipe (skip NULL placeholder items)
+        if item.get('recipe_id') is not None:
+            menu['days'][day][meal_type]['recipes'].append({
+                'id': item['id'],
+                'recipe_id': item['recipe_id'],
+                'recipe_name': item['recipe_name'],
+                'category': item['category'],
+                'cooking_time': item['cooking_time'],
+                'base_servings': item['base_servings']
+            })
     
     conn.close()
     return menu
 
 def update_menu_item(menu_id, day_number, meal_type, recipe_id):
-    """Update a specific meal in a menu."""
+    """Update a specific meal in a menu (legacy - replaces first item)."""
     conn = get_db()
     cursor = conn.cursor()
     
@@ -690,6 +710,73 @@ def update_menu_item(menu_id, day_number, meal_type, recipe_id):
         SET recipe_id = ?
         WHERE menu_id = ? AND day_number = ? AND meal_type = ?
     ''', (recipe_id, menu_id, day_number, meal_type))
+    
+    conn.commit()
+    conn.close()
+
+
+def add_menu_recipe(menu_id, day_number, meal_type, recipe_id):
+    """Add a recipe to a specific meal slot (supports multiple recipes)."""
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # Get current day_servings from existing items for this meal slot
+    cursor.execute('''
+        SELECT day_servings FROM menu_items
+        WHERE menu_id = ? AND day_number = ? AND meal_type = ?
+        LIMIT 1
+    ''', (menu_id, day_number, meal_type))
+    existing = cursor.fetchone()
+    day_servings = existing['day_servings'] if existing else None
+    
+    # Check if there's an empty placeholder (recipe_id IS NULL)
+    cursor.execute('''
+        SELECT id FROM menu_items
+        WHERE menu_id = ? AND day_number = ? AND meal_type = ? AND recipe_id IS NULL
+        LIMIT 1
+    ''', (menu_id, day_number, meal_type))
+    placeholder = cursor.fetchone()
+    
+    if placeholder:
+        # Update the placeholder with the new recipe
+        cursor.execute('''
+            UPDATE menu_items SET recipe_id = ? WHERE id = ?
+        ''', (recipe_id, placeholder['id']))
+    else:
+        # Insert a new menu item for this meal slot
+        cursor.execute('''
+            INSERT INTO menu_items (menu_id, day_number, meal_type, recipe_id, day_servings)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (menu_id, day_number, meal_type, recipe_id, day_servings))
+    
+    conn.commit()
+    conn.close()
+
+
+def remove_menu_recipe(menu_id, day_number, meal_type, menu_item_id):
+    """Remove a specific recipe from a meal slot."""
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # Delete the specific menu item
+    cursor.execute('''
+        DELETE FROM menu_items
+        WHERE id = ? AND menu_id = ? AND day_number = ? AND meal_type = ?
+    ''', (menu_item_id, menu_id, day_number, meal_type))
+    
+    # Check if any items remain for this meal slot
+    cursor.execute('''
+        SELECT COUNT(*) as count FROM menu_items
+        WHERE menu_id = ? AND day_number = ? AND meal_type = ?
+    ''', (menu_id, day_number, meal_type))
+    remaining = cursor.fetchone()['count']
+    
+    # If no items remain, create an empty placeholder
+    if remaining == 0:
+        cursor.execute('''
+            INSERT INTO menu_items (menu_id, day_number, meal_type, recipe_id)
+            VALUES (?, ?, ?, NULL)
+        ''', (menu_id, day_number, meal_type))
     
     conn.commit()
     conn.close()
