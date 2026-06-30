@@ -106,6 +106,12 @@ body {
     background: transparent;
     border: none;
     font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .nav-dropdown-menu {
