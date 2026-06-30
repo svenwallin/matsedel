@@ -1,3 +1,4 @@
 *.pub
 matsedel
 yes
+data/recipes.db
