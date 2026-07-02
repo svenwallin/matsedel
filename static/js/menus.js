@@ -51,6 +51,7 @@ async function createMenu(e) {
     const name = document.getElementById('menuName').value.trim();
     const numDays = parseInt(document.getElementById('numDays').value);
     const servings = parseInt(document.getElementById('servings').value);
+    const startDate = document.getElementById('startDate').value || null;
     
     if (!name || numDays < 1) {
         alert('Fyll i alla fält korrekt');
@@ -61,7 +62,7 @@ async function createMenu(e) {
         const response = await fetch('/api/menus', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, num_days: numDays, servings })
+            body: JSON.stringify({ name, num_days: numDays, servings, start_date: startDate })
         });
         
         const data = await response.json();

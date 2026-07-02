@@ -6,6 +6,19 @@ const MEAL_LABELS = {
     'evening_fika': '🍪 Kvällsfika'
 };
 
+const DAY_NAMES = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
+
+function getDayLabel(dayNumber, startDate) {
+    if (!startDate) {
+        return `Dag ${dayNumber}`;
+    }
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + dayNumber - 1);
+    const dayName = DAY_NAMES[date.getDay()];
+    const dateStr = date.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' });
+    return `${dayName} ${dateStr}`;
+}
+
 let currentMenu = null;
 let allRecipes = [];
 let currentSelection = { day: null, meal: null };
@@ -90,11 +103,15 @@ async function loadAllRecipes() {
 // Display menu
 function displayMenu(menu) {
     // Header
+    const startDateInfo = menu.start_date 
+        ? `<span>🗓️ Start: ${new Date(menu.start_date).toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' })}</span>` 
+        : '';
     document.getElementById('menuHeader').innerHTML = `
         <div class="menu-title-section">
             <h1>${menu.name}</h1>
             <div class="menu-meta">
                 <span>📅 ${menu.num_days} dagar</span>
+                ${startDateInfo}
                 <span>👥 ${menu.servings} portioner</span>
             </div>
         </div>
@@ -122,7 +139,7 @@ function displayMenu(menu) {
         const dayData = menu.days[day] || {};
         
         html += `<tr class="menu-row">`;
-        html += `<td class="day-cell"><span class="day-number">Dag ${day}</span></td>`;
+        html += `<td class="day-cell"><span class="day-number">${getDayLabel(day, menu.start_date)}</span></td>`;
         
         for (const mealType of ['breakfast', 'lunch', 'dinner', 'evening_fika']) {
             const meal = dayData[mealType] || { recipes: [], day_servings: null };
