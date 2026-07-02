@@ -880,7 +880,8 @@ body {
 }
 
 .menu-table th.meal-column {
-    min-width: 180px;
+    min-width: 160px;
+    width: 22%;
 }
 
 .menu-row {
@@ -1046,22 +1047,25 @@ body {
     position: relative;
     box-shadow: 0 1px 4px rgba(0, 99, 65, 0.1);
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .recipe-card-multi .recipe-card-name {
     font-weight: 600;
     color: var(--primary-color);
-    font-size: 0.9rem;
-    flex: 1;
+    font-size: 0.85rem;
+    flex: 1 1 100%;
+    min-width: 0;
+    word-wrap: break-word;
     margin-bottom: 0;
     padding-right: 0;
 }
 
 .recipe-card-multi .recipe-card-time {
     color: var(--text-light);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     white-space: nowrap;
 }
 
@@ -1073,14 +1077,14 @@ body {
 }
 
 .recipe-servings-input {
-    width: 48px;
+    width: 44px;
     padding: 3px 4px;
     border: 1px solid #c9d5cf;
     border-radius: 5px;
     background: #f8faf9;
     color: var(--primary-dark);
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     text-align: center;
 }
 
@@ -1945,7 +1949,15 @@ body {
     }
     
     .menu-table th.meal-column {
-        min-width: 120px;
+        min-width: 100px;
+    }
+    
+    .recipe-card-multi .recipe-card-name {
+        font-size: 0.8rem;
+    }
+    
+    .recipe-servings-input {
+        width: 40px;
     }
     
     .meal-cell {
