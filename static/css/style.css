@@ -98,6 +98,16 @@ body {
     color: var(--white);
 }
 
+.nav-logout {
+    color: #c62828;
+    border: 1px solid #c62828;
+}
+
+.nav-logout:hover {
+    background: #c62828;
+    color: var(--white);
+}
+
 .nav-dropdown {
     position: relative;
 }

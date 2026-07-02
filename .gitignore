@@ -2,3 +2,5 @@
 matsedel
 yes
 data/recipes.db
+.env
+oauth2-proxy/allowed_emails.txt
