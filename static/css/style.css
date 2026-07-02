@@ -1055,6 +1055,42 @@ body {
     white-space: nowrap;
 }
 
+.recipe-servings-control {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: auto;
+}
+
+.recipe-servings-input {
+    width: 48px;
+    padding: 3px 4px;
+    border: 1px solid #c9d5cf;
+    border-radius: 5px;
+    background: #f8faf9;
+    color: var(--primary-dark);
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.recipe-servings-input::placeholder {
+    color: #8fa99d;
+    opacity: 1;
+}
+
+.recipe-servings-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--white);
+}
+
+.recipe-servings-label {
+    color: var(--text-light);
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
 .remove-recipe-btn-small {
     background: #ffebee;
     border: 1px solid #ef5350;

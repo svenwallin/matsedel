@@ -7,7 +7,7 @@ from database import (init_db, get_all_recipes, get_recipe, add_recipe, update_r
                       delete_recipe,
                       get_recipes_by_category, get_categories, search_recipes,
                       create_menu, get_all_menus, get_menu, update_menu_item, update_menu_meal_servings,
-                      add_menu_recipe, remove_menu_recipe,
+                      add_menu_recipe, remove_menu_recipe, update_recipe_servings,
                       delete_menu, get_menu_shopping_list, MEAL_TYPES,
                       get_all_pantry_items, add_pantry_item, update_pantry_item,
                       delete_pantry_item, get_all_pantry_locations,
@@ -400,7 +400,7 @@ def api_update_menu_item(menu_id):
 
 @app.route('/api/menus/<int:menu_id>/recipes', methods=['POST'])
 def api_add_menu_recipe(menu_id):
-    """Add a recipe to a menu meal slot (supports multiple recipes per meal)."""
+    """Add a recipe to a menu meal slot (supports multiple recipes per meal with individual servings)."""
     data = request.json
     
     required = ['day_number', 'meal_type', 'recipe_id']
@@ -410,11 +410,22 @@ def api_add_menu_recipe(menu_id):
     if data['meal_type'] not in MEAL_TYPES:
         return jsonify({'error': f'Invalid meal_type. Must be one of: {MEAL_TYPES}'}), 400
     
+    # Optional servings parameter for this specific recipe
+    servings = data.get('servings')
+    if servings is not None:
+        try:
+            servings = int(servings)
+            if servings < 1:
+                return jsonify({'error': 'servings must be at least 1'}), 400
+        except (TypeError, ValueError):
+            return jsonify({'error': 'servings must be a number'}), 400
+    
     add_menu_recipe(
         menu_id=menu_id,
         day_number=data['day_number'],
         meal_type=data['meal_type'],
-        recipe_id=data['recipe_id']
+        recipe_id=data['recipe_id'],
+        servings=servings
     )
     
     return jsonify({'message': 'Recipe added to menu successfully'}), 201
@@ -440,6 +451,31 @@ def api_remove_menu_recipe(menu_id, menu_item_id):
     )
     
     return jsonify({'message': 'Recipe removed from menu successfully'})
+
+
+@app.route('/api/menus/<int:menu_id>/recipes/<int:menu_item_id>/servings', methods=['PUT'])
+def api_update_recipe_servings(menu_id, menu_item_id):
+    """Update servings for a specific recipe in a meal slot."""
+    data = request.json or {}
+    
+    servings = data.get('servings')
+    if servings in ('', None):
+        servings = None
+    else:
+        try:
+            servings = int(servings)
+        except (TypeError, ValueError):
+            return jsonify({'error': 'servings must be a number'}), 400
+        
+        if servings < 1:
+            return jsonify({'error': 'servings must be at least 1'}), 400
+    
+    update_recipe_servings(
+        menu_item_id=menu_item_id,
+        servings=servings
+    )
+    
+    return jsonify({'message': 'Recipe servings updated successfully'})
 
 @app.route('/api/menus/<int:menu_id>/meal-servings', methods=['PUT'])
 def api_update_menu_meal_servings(menu_id):

@@ -128,38 +128,36 @@ function displayMenu(menu) {
             const meal = dayData[mealType] || { recipes: [], day_servings: null };
             const recipes = meal.recipes || [];
             const hasRecipes = recipes.length > 0;
-            const mealServings = meal.day_servings != null ? meal.day_servings : '';
-            const servingsControl = `
-                <div class="meal-servings-control" onclick="event.stopPropagation()">
-                    <label for="mealServings-${day}-${mealType}">Port.</label>
-                    <input
-                        id="mealServings-${day}-${mealType}"
-                        class="meal-servings-input"
-                        type="number"
-                        min="1"
-                        step="1"
-                        value="${mealServings}"
-                        placeholder="${menu.servings}"
-                        onclick="event.stopPropagation()"
-                        onchange="updateMealServings(${day}, '${mealType}', this.value)"
-                    >
-                </div>
-            `;
             
             if (hasRecipes) {
-                const recipesHtml = recipes.map(recipe => `
+                const recipesHtml = recipes.map(recipe => {
+                    const recipeServings = recipe.servings != null ? recipe.servings : '';
+                    return `
                     <div class="recipe-card-multi">
                         <div class="recipe-card-name">${recipe.recipe_name}</div>
                         ${recipe.cooking_time ? `<div class="recipe-card-time">⏱️ ${recipe.cooking_time}</div>` : ''}
+                        <div class="recipe-servings-control" onclick="event.stopPropagation()">
+                            <input
+                                class="recipe-servings-input"
+                                type="number"
+                                min="1"
+                                step="1"
+                                value="${recipeServings}"
+                                placeholder="${menu.servings}"
+                                title="Portioner för detta recept"
+                                onclick="event.stopPropagation()"
+                                onchange="updateRecipeServings(${recipe.id}, this.value)"
+                            >
+                            <span class="recipe-servings-label">port.</span>
+                        </div>
                         <button class="remove-recipe-btn-small" onclick="event.stopPropagation(); removeRecipe(${day}, '${mealType}', ${recipe.id})" title="Ta bort recept">
                             ✕
                         </button>
                     </div>
-                `).join('');
+                `}).join('');
                 
                 html += `
                     <td class="meal-cell has-recipe">
-                        ${servingsControl}
                         <div class="recipes-list">
                             ${recipesHtml}
                         </div>
@@ -171,7 +169,6 @@ function displayMenu(menu) {
             } else {
                 html += `
                     <td class="meal-cell empty" onclick="openRecipeSelector(${day}, '${mealType}')">
-                        ${servingsControl}
                         <div class="empty-slot">
                             <span class="plus-icon">+</span>
                             <span class="add-text">Välj recept</span>
@@ -241,6 +238,40 @@ async function updateMealServings(day, mealType, value) {
     } catch (error) {
         console.error('Error updating day servings:', error);
         alert('Kunde inte uppdatera dagsportioner.');
+        loadMenu(menuId);
+    }
+}
+
+// Update servings for a specific recipe in the menu
+async function updateRecipeServings(menuItemId, value) {
+    const pathParts = window.location.pathname.split('/');
+    const menuId = pathParts[pathParts.length - 1];
+    const trimmed = String(value ?? '').trim();
+
+    if (trimmed !== '' && (!Number.isInteger(Number(trimmed)) || Number(trimmed) < 1)) {
+        alert('Portioner måste vara ett heltal från 1 och uppåt.');
+        loadMenu(menuId);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/menus/${menuId}/recipes/${menuItemId}/servings`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                servings: trimmed === '' ? null : Number(trimmed)
+            })
+        });
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            alert(data.error || 'Kunde inte uppdatera portioner.');
+        }
+
+        loadMenu(menuId);
+    } catch (error) {
+        console.error('Error updating recipe servings:', error);
+        alert('Kunde inte uppdatera portioner.');
         loadMenu(menuId);
     }
 }

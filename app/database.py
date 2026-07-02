@@ -694,7 +694,8 @@ def get_menu(menu_id):
                 'recipe_name': item['recipe_name'],
                 'category': item['category'],
                 'cooking_time': item['cooking_time'],
-                'base_servings': item['base_servings']
+                'base_servings': item['base_servings'],
+                'servings': item['day_servings']
             })
     
     conn.close()
@@ -715,19 +716,10 @@ def update_menu_item(menu_id, day_number, meal_type, recipe_id):
     conn.close()
 
 
-def add_menu_recipe(menu_id, day_number, meal_type, recipe_id):
-    """Add a recipe to a specific meal slot (supports multiple recipes)."""
+def add_menu_recipe(menu_id, day_number, meal_type, recipe_id, servings=None):
+    """Add a recipe to a specific meal slot (supports multiple recipes with individual servings)."""
     conn = get_db()
     cursor = conn.cursor()
-    
-    # Get current day_servings from existing items for this meal slot
-    cursor.execute('''
-        SELECT day_servings FROM menu_items
-        WHERE menu_id = ? AND day_number = ? AND meal_type = ?
-        LIMIT 1
-    ''', (menu_id, day_number, meal_type))
-    existing = cursor.fetchone()
-    day_servings = existing['day_servings'] if existing else None
     
     # Check if there's an empty placeholder (recipe_id IS NULL)
     cursor.execute('''
@@ -738,16 +730,16 @@ def add_menu_recipe(menu_id, day_number, meal_type, recipe_id):
     placeholder = cursor.fetchone()
     
     if placeholder:
-        # Update the placeholder with the new recipe
+        # Update the placeholder with the new recipe and servings
         cursor.execute('''
-            UPDATE menu_items SET recipe_id = ? WHERE id = ?
-        ''', (recipe_id, placeholder['id']))
+            UPDATE menu_items SET recipe_id = ?, day_servings = ? WHERE id = ?
+        ''', (recipe_id, servings, placeholder['id']))
     else:
-        # Insert a new menu item for this meal slot
+        # Insert a new menu item for this meal slot with its own servings
         cursor.execute('''
             INSERT INTO menu_items (menu_id, day_number, meal_type, recipe_id, day_servings)
             VALUES (?, ?, ?, ?, ?)
-        ''', (menu_id, day_number, meal_type, recipe_id, day_servings))
+        ''', (menu_id, day_number, meal_type, recipe_id, servings))
     
     conn.commit()
     conn.close()
@@ -793,6 +785,24 @@ def update_menu_meal_servings(menu_id, day_number, meal_type, servings_override)
         WHERE menu_id = ? AND day_number = ? AND meal_type = ?
         ''',
         (servings_override, menu_id, day_number, meal_type)
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def update_recipe_servings(menu_item_id, servings):
+    """Update servings for a specific recipe in a meal slot."""
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        '''
+        UPDATE menu_items
+        SET day_servings = ?
+        WHERE id = ?
+        ''',
+        (servings, menu_item_id)
     )
 
     conn.commit()
