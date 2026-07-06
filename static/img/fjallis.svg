@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Fjallis i fjallen">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9fd3ff"/>
+      <stop offset="100%" stop-color="#e9f6ff"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9ecf8d"/>
+      <stop offset="100%" stop-color="#6ea562"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#sky)"/>
+
+  <circle cx="980" cy="130" r="55" fill="#ffd76a"/>
+
+  <polygon points="120,520 350,180 580,520" fill="#b7c7d9"/>
+  <polygon points="460,560 700,220 930,560" fill="#9eb2c7"/>
+  <polygon points="760,560 980,260 1140,560" fill="#889fb8"/>
+
+  <polygon points="350,180 430,300 270,300" fill="#ffffff"/>
+  <polygon points="700,220 790,350 610,350" fill="#ffffff"/>
+  <polygon points="980,260 1040,350 920,350" fill="#ffffff"/>
+
+  <rect y="560" width="1200" height="240" fill="url(#ground)"/>
+
+  <ellipse cx="600" cy="620" rx="130" ry="25" fill="#5e6b5a" opacity="0.35"/>
+
+  <!-- Fjallis: original character -->
+  <circle cx="600" cy="500" r="48" fill="#f9d6b2"/>
+  <ellipse cx="585" cy="495" rx="5" ry="7" fill="#2f2f2f"/>
+  <ellipse cx="615" cy="495" rx="5" ry="7" fill="#2f2f2f"/>
+  <path d="M582 520 Q600 535 618 520" stroke="#8a3d2c" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+  <path d="M550 470 L600 430 L650 470" fill="#2d5a86"/>
+  <rect x="560" y="545" width="80" height="95" rx="16" fill="#2d5a86"/>
+  <rect x="570" y="640" width="20" height="70" rx="8" fill="#3c3c3c"/>
+  <rect x="610" y="640" width="20" height="70" rx="8" fill="#3c3c3c"/>
+  <rect x="536" y="558" width="24" height="16" rx="6" fill="#2d5a86"/>
+  <rect x="640" y="558" width="24" height="16" rx="6" fill="#2d5a86"/>
+
+  <!-- Backpack -->
+  <rect x="650" y="555" width="38" height="56" rx="10" fill="#8b5a2b"/>
+
+  <!-- Pot on stove -->
+  <rect x="485" y="650" width="88" height="16" rx="6" fill="#444"/>
+  <rect x="500" y="626" width="58" height="26" rx="8" fill="#6f7f8f"/>
+  <rect x="522" y="620" width="14" height="6" rx="3" fill="#6f7f8f"/>
+  <path d="M520 620 Q530 598 540 620" stroke="#ff8f3a" stroke-width="4" fill="none"/>
+
+  <text x="60" y="90" fill="#203447" font-family="Arial, sans-serif" font-size="52" font-weight="700">
+    Fjallis pa fjallvandring
+  </text>
+  <text x="60" y="135" fill="#203447" font-family="Arial, sans-serif" font-size="28">
+    En egen originalfigur for receptet Kottbullar och Makaroner
+  </text>
+</svg>

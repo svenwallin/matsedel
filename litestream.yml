@@ -1,0 +1,9 @@
+dbs:
+  - path: ${DATABASE_PATH}
+    replicas:
+      - type: s3
+        bucket: ${LITESTREAM_S3_BUCKET}
+        path: ${LITESTREAM_S3_PREFIX}/recipes.db
+        region: ${AWS_REGION}
+        endpoint: ${LITESTREAM_S3_ENDPOINT}
+        force-path-style: true

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Kottbullar med makaroner">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff7e8"/>
+      <stop offset="100%" stop-color="#ffe8c7"/>
+    </linearGradient>
+    <radialGradient id="plate" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e9eef3"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#bg)"/>
+
+  <text x="70" y="95" fill="#5a3b1f" font-family="Arial, sans-serif" font-size="54" font-weight="700">
+    Kottbullar och Makaroner
+  </text>
+  <text x="70" y="140" fill="#7b5c3d" font-family="Arial, sans-serif" font-size="28">
+    varm lunch fran stormkoket
+  </text>
+
+  <!-- Table shadow -->
+  <ellipse cx="600" cy="610" rx="360" ry="70" fill="#8a6a4d" opacity="0.2"/>
+
+  <!-- Plate -->
+  <ellipse cx="600" cy="530" rx="360" ry="170" fill="url(#plate)"/>
+  <ellipse cx="600" cy="530" rx="300" ry="125" fill="#f8fbff"/>
+
+  <!-- Macaroni (left side) -->
+  <g fill="#f5cf73" stroke="#e3b558" stroke-width="4">
+    <rect x="390" y="500" width="78" height="26" rx="13"/>
+    <rect x="425" y="535" width="80" height="26" rx="13"/>
+    <rect x="360" y="545" width="72" height="24" rx="12"/>
+    <rect x="455" y="485" width="74" height="24" rx="12"/>
+    <rect x="405" y="570" width="84" height="26" rx="13"/>
+    <rect x="350" y="585" width="74" height="24" rx="12"/>
+    <rect x="475" y="555" width="78" height="24" rx="12"/>
+  </g>
+
+  <!-- Meatballs (right side) -->
+  <g>
+    <circle cx="690" cy="500" r="34" fill="#8b4f24"/>
+    <circle cx="760" cy="525" r="35" fill="#7e451f"/>
+    <circle cx="715" cy="570" r="34" fill="#91552a"/>
+    <circle cx="790" cy="585" r="33" fill="#7b421d"/>
+    <circle cx="835" cy="535" r="34" fill="#8a4c22"/>
+
+    <circle cx="678" cy="488" r="8" fill="#b97a49" opacity="0.6"/>
+    <circle cx="748" cy="512" r="8" fill="#b97a49" opacity="0.6"/>
+    <circle cx="703" cy="558" r="8" fill="#b97a49" opacity="0.6"/>
+    <circle cx="822" cy="523" r="8" fill="#b97a49" opacity="0.6"/>
+  </g>
+
+  <!-- Ketchup drizzle -->
+  <path d="M640 620 C700 650, 810 645, 860 610" stroke="#ce2b2b" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+  <!-- Fork -->
+  <g transform="translate(920,460) rotate(18)">
+    <rect x="0" y="0" width="18" height="170" rx="8" fill="#8b98a5"/>
+    <rect x="-10" y="-26" width="6" height="30" rx="3" fill="#8b98a5"/>
+    <rect x="0" y="-26" width="6" height="30" rx="3" fill="#8b98a5"/>
+    <rect x="10" y="-26" width="6" height="30" rx="3" fill="#8b98a5"/>
+  </g>
+
+  <!-- Steam -->
+  <path d="M520 360 C500 330, 540 315, 520 280" stroke="#ffffff" stroke-width="8" fill="none" opacity="0.7" stroke-linecap="round"/>
+  <path d="M620 355 C600 325, 640 310, 620 275" stroke="#ffffff" stroke-width="8" fill="none" opacity="0.7" stroke-linecap="round"/>
+  <path d="M720 360 C700 330, 740 315, 720 280" stroke="#ffffff" stroke-width="8" fill="none" opacity="0.7" stroke-linecap="round"/>
+</svg>

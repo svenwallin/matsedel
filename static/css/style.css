@@ -2734,6 +2734,44 @@ body {
     }
 }
 
+/* ===== Shopping List Export Styles ===== */
+.shopping-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.shopping-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.copy-status {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    transition: opacity 0.3s ease;
+}
+
+.copy-status.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.copy-status.error {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.copy-status:empty {
+    display: none;
+}
+
 /* ===== AI Smart Shopping List Styles ===== */
 .ai-shopping-section {
     margin-top: 40px;

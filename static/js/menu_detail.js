@@ -81,7 +81,6 @@ async function loadMenu(menuId) {
         
         currentMenu = await response.json();
         displayMenu(currentMenu);
-        document.getElementById('shoppingServings').value = currentMenu.servings;
         loadShoppingList();
     } catch (error) {
         console.error('Error loading menu:', error);
@@ -444,12 +443,11 @@ document.addEventListener('click', (e) => {
 async function loadShoppingList() {
     const pathParts = window.location.pathname.split('/');
     const menuId = pathParts[pathParts.length - 1];
-    const servings = document.getElementById('shoppingServings').value;
     const pantryLocationId = getSelectedPantryLocationId();
-    const pantryQuery = pantryLocationId ? `&pantry_location_id=${pantryLocationId}` : '';
+    const query = pantryLocationId ? `?pantry_location_id=${pantryLocationId}` : '';
     
     try {
-        const response = await fetch(`/api/menus/${menuId}/shopping-list?servings=${servings}${pantryQuery}`);
+        const response = await fetch(`/api/menus/${menuId}/shopping-list${query}`);
         const data = await response.json();
         currentShoppingData = data;
         
@@ -463,7 +461,6 @@ async function consumePantryForMenu() {
     const pathParts = window.location.pathname.split('/');
     const menuId = pathParts[pathParts.length - 1];
     const pantryLocationId = getSelectedPantryLocationId();
-    const servings = parseInt(document.getElementById('shoppingServings').value, 10);
 
     if (!pantryLocationId) {
         showShoppingPantryMessage('Välj ett skafferi först.', true);
@@ -493,8 +490,7 @@ async function consumePantryForMenu() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                pantry_location_id: pantryLocationId,
-                servings
+                pantry_location_id: pantryLocationId
             })
         });
 
@@ -515,12 +511,17 @@ async function consumePantryForMenu() {
 // Display shopping list
 function displayShoppingList(data) {
     const container = document.getElementById('shoppingList');
+    const actionsDiv = document.getElementById('shoppingActions');
     const pantryCoverage = Array.isArray(data.pantry_coverage) ? data.pantry_coverage : [];
     
     if ((!data.ingredients || data.ingredients.length === 0) && !data.all_covered) {
         container.innerHTML = '<p class="loading">Lägg till recept i matsedeln för att se inköpslistan.</p>';
+        if (actionsDiv) actionsDiv.style.display = 'none';
         return;
     }
+
+    // Show action buttons when we have data
+    if (actionsDiv) actionsDiv.style.display = 'flex';
 
     const pantryHtml = pantryCoverage.length > 0
         ? `
@@ -558,7 +559,6 @@ function displayShoppingList(data) {
         : '<p class="shopping-all-covered">Allt som behövs finns redan i skafferiet.</p>';
     
     container.innerHTML = `
-        <p class="shopping-list-info">Inköpslista för ${data.servings} portioner:</p>
         ${pantryHtml}
         ${shoppingHtml}
     `;
@@ -575,178 +575,40 @@ function printMenu() {
     window.print();
 }
 
-// ===== AI Smart Shopping List =====
+// ===== Shopping List Export Functions =====
 
-let aiAvailable = false;
-
-// Check AI status on page load
-async function checkAiStatus() {
-    try {
-        const response = await fetch('/api/ai/status');
-        const data = await response.json();
-        aiAvailable = data.gemini_available;
-        
-        const aiSection = document.getElementById('aiSection');
-        if (!aiAvailable) {
-            aiSection.style.display = 'none';
-        }
-    } catch (error) {
-        console.error('Error checking AI status:', error);
-        document.getElementById('aiSection').style.display = 'none';
-    }
-}
-
-// Load smart shopping list with AI suggestions
-async function loadSmartShoppingList() {
-    const pathParts = window.location.pathname.split('/');
-    const menuId = pathParts[pathParts.length - 1];
-    const servings = parseInt(document.getElementById('shoppingServings').value, 10);
-    const pantryLocationId = getSelectedPantryLocationId();
-    
-    const aiBtn = document.getElementById('aiShoppingBtn');
-    const aiResults = document.getElementById('aiResults');
-    const aiStatus = document.getElementById('aiStatus');
-    
-    // Show loading state
-    aiBtn.disabled = true;
-    aiBtn.innerHTML = '<span>✨</span><span>Analyserar...</span>';
-    aiStatus.innerHTML = '<div class="loading">🔍 AI analyserar ingredienser...</div>';
-    aiResults.style.display = 'none';
-    
-    try {
-        let url = `/api/menus/${menuId}/smart-shopping-list?servings=${servings}`;
-        if (pantryLocationId) {
-            url += `&pantry_location_id=${pantryLocationId}`;
-        }
-        
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.error || 'Kunde inte skapa smart lista');
-        }
-        
-        displaySmartResults(data);
-        
-    } catch (error) {
-        console.error('Error loading smart shopping list:', error);
-        aiStatus.innerHTML = `<span class="status-error">❌ ${error.message}</span>`;
-    } finally {
-        aiBtn.disabled = false;
-        aiBtn.innerHTML = '<span>✨</span><span>Skapa smart lista</span>';
-    }
-}
-
-// Display smart shopping list results
-function displaySmartResults(data) {
-    const aiResults = document.getElementById('aiResults');
-    const aiStatus = document.getElementById('aiStatus');
-    
-    if (!data.ingredients || data.ingredients.length === 0) {
-        aiStatus.innerHTML = '<span class="status-info">ℹ️ Lägg till recept i matsedeln först.</span>';
-        aiResults.style.display = 'none';
-        return;
-    }
-    
-    let html = '';
-    
-    // Action buttons for the AI results
-    html += `
-        <div class="ai-actions">
-            <button class="btn btn-secondary" onclick="copySmartList()">
-                <span>📋</span> Kopiera
-            </button>
-            <button class="btn btn-secondary" onclick="exportToPdf()">
-                <span>📄</span> Exportera PDF
-            </button>
-        </div>
-        <p id="smartCopyStatus" class="copy-status"></p>
-    `;
-    
-    // AI Summary/Tips
-    if (data.ai_summary) {
-        html += `
-            <div class="ai-summary" id="aiSummaryContent">
-                <h4>🛒 Smart inköpslista</h4>
-                <div class="ai-summary-content">${formatMarkdown(data.ai_summary)}</div>
-            </div>
-        `;
-    }
-    
-    // Store shopping list data for copy/export
-    window.smartShoppingData = data.ingredients
-        .map(ing => `${ing.name} ${formatAmount(ing.amount)} ${ing.unit}`)
-        .join('\n');
-    window.smartShoppingHtml = data.ai_summary || '';
-    
-    aiStatus.innerHTML = '<span class="status-success">✅ AI-analys klar</span>';
-    aiResults.innerHTML = html;
-    aiResults.style.display = 'block';
-}
-
-// Markdown formatter for AI summary - handles headers, lists, bold, italic
-function formatMarkdown(text) {
-    if (!text) return '';
-    
-    // Process line by line
-    const lines = text.split('\n');
-    let html = '';
-    let inList = false;
-    
-    for (let line of lines) {
-        // Headers
-        if (line.startsWith('### ')) {
-            if (inList) { html += '</ul>'; inList = false; }
-            html += `<h4 class="ai-section-header">${line.substring(4)}</h4>`;
-        } else if (line.startsWith('## ')) {
-            if (inList) { html += '</ul>'; inList = false; }
-            html += `<h3 class="ai-section-header">${line.substring(3)}</h3>`;
-        } else if (line.startsWith('# ')) {
-            if (inList) { html += '</ul>'; inList = false; }
-            html += `<h2 class="ai-section-header">${line.substring(2)}</h2>`;
-        }
-        // List items
-        else if (line.trim().startsWith('- ')) {
-            if (!inList) { html += '<ul class="ai-shopping-list">'; inList = true; }
-            let content = line.trim().substring(2);
-            // Bold and italic
-            content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            html += `<li>${content}</li>`;
-        }
-        // Regular text
-        else if (line.trim()) {
-            if (inList) { html += '</ul>'; inList = false; }
-            let content = line;
-            content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            html += `<p>${content}</p>`;
-        }
-    }
-    
-    if (inList) html += '</ul>';
-    return html;
-}
-
-// Initialize AI section on page load
-document.addEventListener('DOMContentLoaded', () => {
-    checkAiStatus();
-});
-
-// Copy smart shopping list to clipboard
-async function copySmartList() {
-    if (!window.smartShoppingData) {
+// Copy shopping list to clipboard
+async function copyShoppingList() {
+    if (!currentShoppingData || !currentShoppingData.ingredients || currentShoppingData.ingredients.length === 0) {
         showCopyStatus('Ingen inköpslista att kopiera', true);
         return;
     }
     
+    // Build text from shopping list
+    let text = `Inköpslista\n\n`;
+    
+    // Add pantry coverage if available
+    if (currentShoppingData.pantry_coverage && currentShoppingData.pantry_coverage.length > 0) {
+        text += 'FRÅN SKAFFERIET:\n';
+        currentShoppingData.pantry_coverage.forEach(ing => {
+            text += `• ${ing.name}: ${formatAmount(ing.amount)} ${ing.unit}\n`;
+        });
+        text += '\n';
+    }
+    
+    // Add items to buy
+    text += 'BEHÖVER KÖPAS:\n';
+    currentShoppingData.ingredients.forEach(ing => {
+        text += `• ${ing.name}: ${formatAmount(ing.amount)} ${ing.unit}\n`;
+    });
+    
     try {
-        await navigator.clipboard.writeText(window.smartShoppingData);
+        await navigator.clipboard.writeText(text);
         showCopyStatus('✅ Inköpslistan kopierad!', false);
     } catch (err) {
         // Fallback for older browsers
         const textArea = document.createElement('textarea');
-        textArea.value = window.smartShoppingData;
+        textArea.value = text;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand('copy');
@@ -757,7 +619,7 @@ async function copySmartList() {
 
 // Show copy status message
 function showCopyStatus(message, isError) {
-    const statusEl = document.getElementById('smartCopyStatus');
+    const statusEl = document.getElementById('copyStatus');
     if (statusEl) {
         statusEl.textContent = message;
         statusEl.classList.toggle('error', isError);
@@ -770,9 +632,8 @@ function showCopyStatus(message, isError) {
 }
 
 // Export shopping list to PDF
-function exportToPdf() {
-    const summaryContent = document.getElementById('aiSummaryContent');
-    if (!summaryContent) {
+function exportShoppingListPdf() {
+    if (!currentShoppingData || !currentShoppingData.ingredients || currentShoppingData.ingredients.length === 0) {
         showCopyStatus('Ingen lista att exportera', true);
         return;
     }
@@ -780,6 +641,29 @@ function exportToPdf() {
     // Get menu name from page title
     const menuTitle = document.querySelector('h1')?.textContent || 'Inköpslista';
     const today = new Date().toLocaleDateString('sv-SE');
+    
+    // Build pantry section HTML
+    let pantryHtml = '';
+    if (currentShoppingData.pantry_coverage && currentShoppingData.pantry_coverage.length > 0) {
+        pantryHtml = `
+            <h4>📦 Från skafferiet</h4>
+            <ul class="covered">
+                ${currentShoppingData.pantry_coverage.map(ing => 
+                    `<li><span class="name">${ing.name}</span><span class="amount">${formatAmount(ing.amount)} ${ing.unit}</span></li>`
+                ).join('')}
+            </ul>
+        `;
+    }
+    
+    // Build shopping items HTML
+    const shoppingHtml = `
+        <h4>🛒 Behöver köpas</h4>
+        <ul>
+            ${currentShoppingData.ingredients.map(ing => 
+                `<li><span class="name">${ing.name}</span><span class="amount">${formatAmount(ing.amount)} ${ing.unit}</span></li>`
+            ).join('')}
+        </ul>
+    `;
     
     // Create print window
     const printWindow = window.open('', '_blank');
@@ -807,7 +691,14 @@ function exportToPdf() {
                 .date {
                     color: #666;
                     font-size: 0.9rem;
-                    margin-bottom: 30px;
+                    margin-bottom: 20px;
+                }
+                .servings {
+                    background: #e8f5e9;
+                    padding: 10px 15px;
+                    border-radius: 8px;
+                    margin-bottom: 25px;
+                    font-weight: 600;
                 }
                 h4 {
                     color: #2e7d32;
@@ -821,22 +712,25 @@ function exportToPdf() {
                     padding: 0;
                     margin: 0 0 20px 0;
                 }
+                ul.covered li {
+                    background: #f0f0f0;
+                    border-left: 3px solid #999;
+                }
                 li {
-                    padding: 8px 12px;
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 10px 15px;
                     margin-bottom: 5px;
                     background: #f5f5f5;
                     border-left: 3px solid #2e7d32;
+                    border-radius: 0 4px 4px 0;
                 }
-                strong {
-                    color: #333;
+                .name {
+                    font-weight: 500;
                 }
-                em {
+                .amount {
                     color: #666;
-                    font-size: 0.9rem;
-                }
-                p {
-                    color: #666;
-                    font-style: italic;
+                    font-weight: 600;
                 }
                 .footer {
                     margin-top: 40px;
@@ -850,16 +744,17 @@ function exportToPdf() {
                     body { padding: 0; }
                     h1 { font-size: 1.5rem; }
                     h4 { font-size: 1rem; }
-                    li { padding: 5px 10px; }
+                    li { padding: 6px 10px; }
                 }
             </style>
         </head>
         <body>
             <h1>🛒 ${menuTitle}</h1>
             <p class="date">Skapad: ${today}</p>
-            ${summaryContent.querySelector('.ai-summary-content').innerHTML}
+            ${pantryHtml}
+            ${shoppingHtml}
             <div class="footer">
-                Genererad av Matsedel-appen med AI
+                Genererad av Matsedel-appen
             </div>
         </body>
         </html>

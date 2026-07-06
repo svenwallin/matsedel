@@ -1,7 +1,11 @@
 import sqlite3
 import os
+import math
 
-DATABASE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'recipes.db')
+DATABASE_PATH = os.getenv(
+    'DATABASE_PATH',
+    os.path.join(os.path.dirname(__file__), '..', 'data', 'recipes.db')
+)
 
 UNIT_CONVERSIONS = {
     'g': ('weight', 1),
@@ -836,6 +840,21 @@ def get_menu_shopping_list(menu_id, servings=None, pantry_location_id=None):
     shopping_list = _get_menu_required_ingredients(menu_id, target_servings)
     pantry_items = get_all_pantry_items(pantry_location_id) if pantry_location_id else []
     coverage_data = _calculate_menu_pantry_coverage(shopping_list, pantry_items)
+
+    # Convert marshmallows from pieces to bags (40 pieces per bag) for shopping output.
+    for ingredient in coverage_data['ingredients']:
+        if ingredient['name'].lower() == 'marshmallows' and ingredient['unit'] == 'st':
+            ingredient['amount'] = math.ceil(ingredient['amount'] / 40)
+            ingredient['unit'] = 'påse'
+            if 'required_amount' in ingredient:
+                ingredient['required_amount'] = math.ceil(ingredient['required_amount'] / 40)
+            if 'pantry_amount' in ingredient:
+                ingredient['pantry_amount'] = round(ingredient['pantry_amount'] / 40, 2)
+
+    for ingredient in coverage_data['pantry_coverage']:
+        if ingredient['name'].lower() == 'marshmallows' and ingredient['unit'] == 'st':
+            ingredient['amount'] = round(ingredient['amount'] / 40, 2)
+            ingredient['unit'] = 'påse'
     
     return {
         'menu_name': menu['name'],

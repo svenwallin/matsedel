@@ -4,10 +4,17 @@ services:
   app:
     build: .
     container_name: matsedel-app
+    environment:
+      - DATABASE_PATH=/app/data/recipes.db
+      - LITESTREAM_ENABLED=${LITESTREAM_ENABLED:-false}
+      - LITESTREAM_S3_BUCKET=${LITESTREAM_S3_BUCKET:-}
+      - LITESTREAM_S3_PREFIX=${LITESTREAM_S3_PREFIX:-matsedel}
+      - LITESTREAM_S3_ENDPOINT=${LITESTREAM_S3_ENDPOINT:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_REGION=${AWS_REGION:-eu-north-1}
     volumes:
       - ./data:/app/data
-    environment:
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
     networks:
       - matsedel-net
 

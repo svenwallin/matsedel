@@ -52,8 +52,6 @@
             <div class="shopping-list-section" id="shoppingListSection" style="display: none;">
                 <h2>🛒 Inköpslista</h2>
                 <div class="servings-selector">
-                    <label>Beräkna för antal portioner:</label>
-                    <input type="number" id="shoppingServings" min="1" max="200" value="10">
                     <label for="shoppingPantrySelect">Skafferi:</label>
                     <select id="shoppingPantrySelect"></select>
                     <button class="btn btn-secondary" onclick="loadShoppingList()">Uppdatera</button>
@@ -64,21 +62,16 @@
                     <!-- Shopping list loaded dynamically -->
                 </div>
                 
-                <!-- AI Smart Shopping List Section -->
-                <div class="ai-shopping-section" id="aiSection">
-                    <h3>🤖 Smart inköpslista</h3>
-                    <p class="ai-description">Använd AI för att skapa en optimerad inköpslista med tips.</p>
-                    <div class="ai-buttons">
-                        <button class="btn btn-primary" id="aiShoppingBtn" onclick="loadSmartShoppingList()">
-                            <span>✨</span>
-                            <span>Skapa smart lista</span>
-                        </button>
-                    </div>
-                    <div id="aiStatus" class="ai-status"></div>
-                    <div id="aiResults" class="ai-results" style="display: none;">
-                        <!-- AI results loaded dynamically -->
-                    </div>
+                <!-- Export/Copy Actions -->
+                <div class="shopping-actions" id="shoppingActions" style="display: none;">
+                    <button class="btn btn-secondary" onclick="copyShoppingList()">
+                        <span>📋</span> Kopiera lista
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportShoppingListPdf()">
+                        <span>📄</span> Exportera PDF
+                    </button>
                 </div>
+                <p id="copyStatus" class="copy-status"></p>
             </div>
         </div>
     </main>
