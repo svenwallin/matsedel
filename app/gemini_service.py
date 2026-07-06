@@ -106,8 +106,17 @@ Ge ENDAST valid JSON som svar, ingen annan text."""
         logger.debug(f"Response was: {response_text}")
         return None
     except Exception as e:
+        error_msg = str(e)
+        if '429' in error_msg or 'depleted' in error_msg.lower() or 'quota' in error_msg.lower():
+            logger.error(f"Gemini API quota exceeded: {e}")
+            raise QuotaExceededError("Gemini API-krediter är slut. Besök https://ai.studio/projects för att lägga till mer kredit.")
         logger.error(f"Gemini API error: {e}")
         return None
+
+
+class QuotaExceededError(Exception):
+    """Raised when API quota is exceeded."""
+    pass
 
 
 def generate_ica_shopping_summary(ingredients: List[Dict], matched_products: List[Dict]) -> Optional[str]:
@@ -165,6 +174,10 @@ Svara ENDAST med den formaterade listan, inget annat."""
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
+        error_msg = str(e)
+        if '429' in error_msg or 'depleted' in error_msg.lower() or 'quota' in error_msg.lower():
+            logger.error(f"Gemini API quota exceeded: {e}")
+            raise QuotaExceededError("Gemini API-krediter är slut. Besök https://ai.studio/projects för att lägga till mer kredit.")
         logger.error(f"Gemini API error generating summary: {e}")
         return None
 
