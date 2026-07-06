@@ -13,6 +13,10 @@ from database import (init_db, get_all_recipes, get_recipe, add_recipe, update_r
                       delete_pantry_item, get_all_pantry_locations,
                       add_pantry_location, update_pantry_location,
                       delete_pantry_location, consume_menu_from_pantry)
+from gemini_service import (is_gemini_available, match_ingredients_to_ica_products,
+                            generate_ica_shopping_summary)
+from ica_service import (is_ica_available, search_ica_products, search_products_batch,
+                         generate_ica_cart_links, get_ica_search_url)
 
 app = Flask(__name__, static_folder='../static', template_folder='../templates')
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
@@ -551,6 +555,155 @@ def api_consume_pantry(menu_id):
 def api_meal_types():
     """Get available meal types."""
     return jsonify(MEAL_TYPES)
+
+
+# ===== ICA Integration API Routes =====
+
+@app.route('/api/ica/status')
+def api_ica_status():
+    """Check if ICA and Gemini integrations are available."""
+    return jsonify({
+        'gemini_available': is_gemini_available(),
+        'ica_available': is_ica_available(),
+    })
+
+
+@app.route('/api/ica/search')
+def api_ica_search():
+    """Search for a product on ICA."""
+    search_term = request.args.get('q', '')
+    limit = request.args.get('limit', 5, type=int)
+    
+    if not search_term:
+        return jsonify({'error': 'Search term required'}), 400
+    
+    if not is_ica_available():
+        return jsonify({'error': 'ICA integration not available'}), 503
+    
+    products = search_ica_products(search_term, limit)
+    return jsonify({
+        'search_term': search_term,
+        'products': products,
+        'search_url': get_ica_search_url(search_term),
+    })
+
+
+@app.route('/api/menus/<int:menu_id>/ica-shopping-list')
+def api_ica_shopping_list(menu_id):
+    """Get AI-enhanced shopping list with ICA product suggestions."""
+    servings = request.args.get('servings', type=int)
+    pantry_location_id = request.args.get('pantry_location_id', type=int)
+    
+    # First get the regular shopping list
+    shopping_list = get_menu_shopping_list(menu_id, servings, pantry_location_id)
+    
+    if not shopping_list:
+        return jsonify({'error': 'Menu not found'}), 404
+    
+    ingredients = shopping_list.get('ingredients', [])
+    
+    if not ingredients:
+        return jsonify({
+            **shopping_list,
+            'ica_products': [],
+            'ica_summary': None,
+            'ica_cart_links': None,
+        })
+    
+    # Use Gemini to match ingredients to ICA products if available
+    ai_matched = None
+    ica_summary = None
+    
+    if is_gemini_available():
+        try:
+            ai_matched = match_ingredients_to_ica_products(ingredients)
+            if ai_matched:
+                ica_summary = generate_ica_shopping_summary(ingredients, ai_matched)
+        except Exception as e:
+            logger.error(f"Gemini matching error: {e}")
+    
+    # Generate cart links
+    ica_cart_links = None
+    if ai_matched:
+        ica_cart_links = generate_ica_cart_links(ai_matched)
+    else:
+        # Fallback: generate links based on original ingredient names
+        simple_products = [{'original_name': ing['name'], 'amount': ing['amount'], 'unit': ing['unit']}
+                          for ing in ingredients]
+        ica_cart_links = generate_ica_cart_links(simple_products)
+    
+    # Search ICA for products (if ICA scraping available)
+    ica_products = []
+    if is_ica_available() and ai_matched:
+        # Use AI-suggested search terms
+        ica_products = search_products_batch(ai_matched[:10])  # Limit to avoid too many requests
+    elif is_ica_available():
+        # Use original ingredient names
+        simple_ingredients = [{'name': ing['name'], 'amount': ing['amount'], 'unit': ing['unit']}
+                             for ing in ingredients[:10]]
+        ica_products = search_products_batch(simple_ingredients)
+    
+    return jsonify({
+        **shopping_list,
+        'ai_matched_products': ai_matched,
+        'ica_products': ica_products,
+        'ica_summary': ica_summary,
+        'ica_cart_links': ica_cart_links,
+        'gemini_available': is_gemini_available(),
+        'ica_available': is_ica_available(),
+    })
+
+
+# ===== AI Smart Shopping List API Routes =====
+
+@app.route('/api/ai/status')
+def api_ai_status():
+    """Check if AI (Gemini) integration is available."""
+    return jsonify({
+        'gemini_available': is_gemini_available(),
+    })
+
+
+@app.route('/api/menus/<int:menu_id>/smart-shopping-list')
+def api_smart_shopping_list(menu_id):
+    """Get AI-enhanced smart shopping list."""
+    servings = request.args.get('servings', type=int)
+    pantry_location_id = request.args.get('pantry_location_id', type=int)
+    
+    # First get the regular shopping list
+    shopping_list = get_menu_shopping_list(menu_id, servings, pantry_location_id)
+    
+    if not shopping_list:
+        return jsonify({'error': 'Menu not found'}), 404
+    
+    ingredients = shopping_list.get('ingredients', [])
+    
+    if not ingredients:
+        return jsonify({
+            **shopping_list,
+            'ai_products': [],
+            'ai_summary': None,
+        })
+    
+    # Use Gemini to enhance the shopping list
+    ai_products = None
+    ai_summary = None
+    
+    if is_gemini_available():
+        try:
+            ai_products = match_ingredients_to_ica_products(ingredients)
+            if ai_products:
+                ai_summary = generate_ica_shopping_summary(ingredients, ai_products)
+        except Exception as e:
+            logger.error(f"Gemini error: {e}")
+    
+    return jsonify({
+        **shopping_list,
+        'ai_products': ai_products,
+        'ai_summary': ai_summary,
+        'gemini_available': is_gemini_available(),
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

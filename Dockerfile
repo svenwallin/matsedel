@@ -2,8 +2,9 @@ FROM docker.io/python:3.11-alpine
 
 WORKDIR /app
 
-# Install dependencies
-RUN pip install --no-cache-dir flask
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
 COPY app/ ./app/

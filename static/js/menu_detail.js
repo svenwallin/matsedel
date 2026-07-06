@@ -113,6 +113,10 @@ function displayMenu(menu) {
                 <span>📅 ${menu.num_days} dagar</span>
                 ${startDateInfo}
                 <span>👥 ${menu.servings} portioner</span>
+                <button class="print-btn" onclick="printMenu()">
+                    <span class="print-btn-icon">🖨️</span>
+                    <span>Skriv ut</span>
+                </button>
             </div>
         </div>
     `;
@@ -564,4 +568,308 @@ function displayShoppingList(data) {
 function formatAmount(amount) {
     const rounded = Math.round(amount * 100) / 100;
     return rounded.toString().replace('.', ',');
+}
+
+// Print menu
+function printMenu() {
+    window.print();
+}
+
+// ===== AI Smart Shopping List =====
+
+let aiAvailable = false;
+
+// Check AI status on page load
+async function checkAiStatus() {
+    try {
+        const response = await fetch('/api/ai/status');
+        const data = await response.json();
+        aiAvailable = data.gemini_available;
+        
+        const aiSection = document.getElementById('aiSection');
+        if (!aiAvailable) {
+            aiSection.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error checking AI status:', error);
+        document.getElementById('aiSection').style.display = 'none';
+    }
+}
+
+// Load smart shopping list with AI suggestions
+async function loadSmartShoppingList() {
+    const pathParts = window.location.pathname.split('/');
+    const menuId = pathParts[pathParts.length - 1];
+    const servings = parseInt(document.getElementById('shoppingServings').value, 10);
+    const pantryLocationId = getSelectedPantryLocationId();
+    
+    const aiBtn = document.getElementById('aiShoppingBtn');
+    const aiResults = document.getElementById('aiResults');
+    const aiStatus = document.getElementById('aiStatus');
+    
+    // Show loading state
+    aiBtn.disabled = true;
+    aiBtn.innerHTML = '<span>✨</span><span>Analyserar...</span>';
+    aiStatus.innerHTML = '<div class="loading">🔍 AI analyserar ingredienser...</div>';
+    aiResults.style.display = 'none';
+    
+    try {
+        let url = `/api/menus/${menuId}/smart-shopping-list?servings=${servings}`;
+        if (pantryLocationId) {
+            url += `&pantry_location_id=${pantryLocationId}`;
+        }
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Kunde inte skapa smart lista');
+        }
+        
+        displaySmartResults(data);
+        
+    } catch (error) {
+        console.error('Error loading smart shopping list:', error);
+        aiStatus.innerHTML = `<span class="status-error">❌ ${error.message}</span>`;
+    } finally {
+        aiBtn.disabled = false;
+        aiBtn.innerHTML = '<span>✨</span><span>Skapa smart lista</span>';
+    }
+}
+
+// Display smart shopping list results
+function displaySmartResults(data) {
+    const aiResults = document.getElementById('aiResults');
+    const aiStatus = document.getElementById('aiStatus');
+    
+    if (!data.ingredients || data.ingredients.length === 0) {
+        aiStatus.innerHTML = '<span class="status-info">ℹ️ Lägg till recept i matsedeln först.</span>';
+        aiResults.style.display = 'none';
+        return;
+    }
+    
+    let html = '';
+    
+    // Action buttons for the AI results
+    html += `
+        <div class="ai-actions">
+            <button class="btn btn-secondary" onclick="copySmartList()">
+                <span>📋</span> Kopiera
+            </button>
+            <button class="btn btn-secondary" onclick="exportToPdf()">
+                <span>📄</span> Exportera PDF
+            </button>
+        </div>
+        <p id="smartCopyStatus" class="copy-status"></p>
+    `;
+    
+    // AI Summary/Tips
+    if (data.ai_summary) {
+        html += `
+            <div class="ai-summary" id="aiSummaryContent">
+                <h4>🛒 Smart inköpslista</h4>
+                <div class="ai-summary-content">${formatMarkdown(data.ai_summary)}</div>
+            </div>
+        `;
+    }
+    
+    // Store shopping list data for copy/export
+    window.smartShoppingData = data.ingredients
+        .map(ing => `${ing.name} ${formatAmount(ing.amount)} ${ing.unit}`)
+        .join('\n');
+    window.smartShoppingHtml = data.ai_summary || '';
+    
+    aiStatus.innerHTML = '<span class="status-success">✅ AI-analys klar</span>';
+    aiResults.innerHTML = html;
+    aiResults.style.display = 'block';
+}
+
+// Markdown formatter for AI summary - handles headers, lists, bold, italic
+function formatMarkdown(text) {
+    if (!text) return '';
+    
+    // Process line by line
+    const lines = text.split('\n');
+    let html = '';
+    let inList = false;
+    
+    for (let line of lines) {
+        // Headers
+        if (line.startsWith('### ')) {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += `<h4 class="ai-section-header">${line.substring(4)}</h4>`;
+        } else if (line.startsWith('## ')) {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += `<h3 class="ai-section-header">${line.substring(3)}</h3>`;
+        } else if (line.startsWith('# ')) {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += `<h2 class="ai-section-header">${line.substring(2)}</h2>`;
+        }
+        // List items
+        else if (line.trim().startsWith('- ')) {
+            if (!inList) { html += '<ul class="ai-shopping-list">'; inList = true; }
+            let content = line.trim().substring(2);
+            // Bold and italic
+            content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            html += `<li>${content}</li>`;
+        }
+        // Regular text
+        else if (line.trim()) {
+            if (inList) { html += '</ul>'; inList = false; }
+            let content = line;
+            content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            html += `<p>${content}</p>`;
+        }
+    }
+    
+    if (inList) html += '</ul>';
+    return html;
+}
+
+// Initialize AI section on page load
+document.addEventListener('DOMContentLoaded', () => {
+    checkAiStatus();
+});
+
+// Copy smart shopping list to clipboard
+async function copySmartList() {
+    if (!window.smartShoppingData) {
+        showCopyStatus('Ingen inköpslista att kopiera', true);
+        return;
+    }
+    
+    try {
+        await navigator.clipboard.writeText(window.smartShoppingData);
+        showCopyStatus('✅ Inköpslistan kopierad!', false);
+    } catch (err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = window.smartShoppingData;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showCopyStatus('✅ Inköpslistan kopierad!', false);
+    }
+}
+
+// Show copy status message
+function showCopyStatus(message, isError) {
+    const statusEl = document.getElementById('smartCopyStatus');
+    if (statusEl) {
+        statusEl.textContent = message;
+        statusEl.classList.toggle('error', isError);
+        statusEl.classList.toggle('success', !isError);
+        
+        setTimeout(() => {
+            statusEl.textContent = '';
+        }, 3000);
+    }
+}
+
+// Export shopping list to PDF
+function exportToPdf() {
+    const summaryContent = document.getElementById('aiSummaryContent');
+    if (!summaryContent) {
+        showCopyStatus('Ingen lista att exportera', true);
+        return;
+    }
+    
+    // Get menu name from page title
+    const menuTitle = document.querySelector('h1')?.textContent || 'Inköpslista';
+    const today = new Date().toLocaleDateString('sv-SE');
+    
+    // Create print window
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Inköpslista - ${menuTitle}</title>
+            <style>
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    color: #333;
+                    line-height: 1.6;
+                }
+                h1 {
+                    color: #2e7d32;
+                    border-bottom: 3px solid #2e7d32;
+                    padding-bottom: 10px;
+                    margin-bottom: 5px;
+                }
+                .date {
+                    color: #666;
+                    font-size: 0.9rem;
+                    margin-bottom: 30px;
+                }
+                h4 {
+                    color: #2e7d32;
+                    font-size: 1.1rem;
+                    margin: 25px 0 10px 0;
+                    padding-bottom: 5px;
+                    border-bottom: 2px solid #2e7d32;
+                }
+                ul {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0 0 20px 0;
+                }
+                li {
+                    padding: 8px 12px;
+                    margin-bottom: 5px;
+                    background: #f5f5f5;
+                    border-left: 3px solid #2e7d32;
+                }
+                strong {
+                    color: #333;
+                }
+                em {
+                    color: #666;
+                    font-size: 0.9rem;
+                }
+                p {
+                    color: #666;
+                    font-style: italic;
+                }
+                .footer {
+                    margin-top: 40px;
+                    padding-top: 20px;
+                    border-top: 1px solid #ddd;
+                    font-size: 0.8rem;
+                    color: #999;
+                    text-align: center;
+                }
+                @media print {
+                    body { padding: 0; }
+                    h1 { font-size: 1.5rem; }
+                    h4 { font-size: 1rem; }
+                    li { padding: 5px 10px; }
+                }
+            </style>
+        </head>
+        <body>
+            <h1>🛒 ${menuTitle}</h1>
+            <p class="date">Skapad: ${today}</p>
+            ${summaryContent.querySelector('.ai-summary-content').innerHTML}
+            <div class="footer">
+                Genererad av Matsedel-appen med AI
+            </div>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+    
+    // Wait for content to load then print
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+    
+    showCopyStatus('📄 PDF-export öppnad i nytt fönster', false);
 }

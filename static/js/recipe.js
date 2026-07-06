@@ -75,6 +75,10 @@ function displayRecipe(recipe) {
                         <span>👥</span>
                         <span>${recipe.base_servings} portioner (bas)</span>
                     </div>
+                    <button class="print-btn" onclick="printRecipe()">
+                        <span class="print-btn-icon">🖨️</span>
+                        <span>Skriv ut</span>
+                    </button>
                 </div>
                 <div class="servings-calculator">
                     <h3>🔢 Beräkna ingredienser</h3>
@@ -168,3 +172,8 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Print recipe
+function printRecipe() {
+    window.print();
+}

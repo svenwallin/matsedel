@@ -63,6 +63,22 @@
                 <div class="shopping-list" id="shoppingList">
                     <!-- Shopping list loaded dynamically -->
                 </div>
+                
+                <!-- AI Smart Shopping List Section -->
+                <div class="ai-shopping-section" id="aiSection">
+                    <h3>🤖 Smart inköpslista</h3>
+                    <p class="ai-description">Använd AI för att skapa en optimerad inköpslista med tips.</p>
+                    <div class="ai-buttons">
+                        <button class="btn btn-primary" id="aiShoppingBtn" onclick="loadSmartShoppingList()">
+                            <span>✨</span>
+                            <span>Skapa smart lista</span>
+                        </button>
+                    </div>
+                    <div id="aiStatus" class="ai-status"></div>
+                    <div id="aiResults" class="ai-results" style="display: none;">
+                        <!-- AI results loaded dynamically -->
+                    </div>
+                </div>
             </div>
         </div>
     </main>
