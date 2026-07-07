@@ -2085,16 +2085,47 @@ body {
     }
     
     .recipe-body {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 30px;
+        display: block;
+        margin-top: 20px;
     }
     
+    .ingredients-section {
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        background: #f9f9f9;
+        page-break-inside: avoid;
+    }
+    
+    .instructions-section {
+        padding: 15px;
+        page-break-inside: avoid;
+    }
+
     .ingredients-section,
     .instructions-section {
-        break-inside: avoid;
+        box-shadow: none;
+        border-radius: 0;
     }
     
+    .ingredients-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .ingredients-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .ingredient-amount {
+        font-weight: bold;
+        color: #006341;
+    }
+
     .ingredients-section h2,
     .instructions-section h2 {
         font-size: 1.2rem;
